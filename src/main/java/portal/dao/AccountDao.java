@@ -160,6 +160,116 @@ public class AccountDao {
 
         return 0;
     }
+    
+	 // =========================
+	 // 登録
+	 // =========================
+    public int insert(AccountDto dto) {
+
+        String sql =
+            "INSERT INTO accounts " +
+            "(login_id, staff_name, password, role, delete_flag, created_at, updated_at) " +
+            "VALUES (?, ?, ?, ?, 0, NOW(), NOW())";
+
+        try (Connection con = DbUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setString(1, dto.getLoginId());
+            ps.setString(2, dto.getStaffName());
+            ps.setString(3, hashPassword(dto.getPassword()));
+            ps.setString(4, dto.getRole());
+
+            return ps.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 0;
+    }
+	 
+    // =========================
+    // ログインID重複チェック
+    // =========================
+    public boolean existsLoginId(String loginId) {
+
+	    String sql =
+	        "SELECT COUNT(*) " +
+	        "FROM accounts " +
+	        "WHERE login_id = ? " +
+	        "AND delete_flag = 0";
+
+	    try (Connection con = DbUtil.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+
+	        ps.setString(1, loginId);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+	 
+	// =========================
+	// スタッフ名重複チェック
+	// =========================
+	public boolean existsStaffName(String staffName) {
+
+	    String sql =
+	        "SELECT COUNT(*) " +
+	        "FROM accounts " +
+	        "WHERE staff_name = ? " +
+	        "AND delete_flag = 0";
+
+	    try (Connection con = DbUtil.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+
+	        ps.setString(1, staffName);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+
+	            if (rs.next()) {
+	                return rs.getInt(1) > 0;
+	            }
+	        }
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return false;
+	}
+	 
+	// =========================
+	// 削除（論理削除）
+	// =========================
+	public int delete(int accountId) {
+
+	    String sql =
+	        "UPDATE accounts " +
+	        "SET delete_flag = 1, updated_at = NOW() " +
+	        "WHERE account_id = ?";
+
+	    try (Connection con = DbUtil.getConnection();
+	         PreparedStatement ps = con.prepareStatement(sql)) {
+
+	        ps.setInt(1, accountId);
+
+	        return ps.executeUpdate();
+
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+
+	    return 0;
+	}
 
     // =========================
     // ハッシュ化（SHA-256）

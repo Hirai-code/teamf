@@ -15,21 +15,54 @@ import portal.dto.AccountDto;
 public class AccountEditorServlet extends HttpServlet {
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+    protected void doGet(
+            HttpServletRequest request,
+            HttpServletResponse response)
             throws ServletException, IOException {
 
-        String idStr = request.getParameter("accountId");
 
-        if (idStr != null) {
-            int accountId = Integer.parseInt(idStr);
+        request.setCharacterEncoding("UTF-8");
 
-            AccountDao dao = new AccountDao();
-            AccountDto account = dao.findById(accountId);
 
-            request.setAttribute("account", account);
+        String idStr = request.getParameter("id");
+
+
+        if (idStr == null) {
+
+            response.sendRedirect(
+                request.getContextPath()
+                + "/AccountHomeServlet");
+
+            return;
         }
 
-        request.getRequestDispatcher("/WEB-INF/jsp/AccountEditor.jsp")
-               .forward(request, response);
+
+        int accountId = Integer.parseInt(idStr);
+
+
+        AccountDao dao = new AccountDao();
+
+        AccountDto account =
+                dao.findById(accountId);
+
+
+        if (account == null) {
+
+            response.sendRedirect(
+                request.getContextPath()
+                + "/AccountHomeServlet");
+
+            return;
+        }
+
+
+        request.setAttribute(
+                "account",
+                account);
+
+
+        request.getRequestDispatcher(
+                "/WEB-INF/jsp/AccountEditor.jsp")
+                .forward(request, response);
     }
 }
