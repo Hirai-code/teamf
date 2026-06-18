@@ -64,8 +64,7 @@ public class ProductUpdateServlet extends HttpServlet {
             return;
         }
         
-        //商品名文字数チェック
-        
+        //商品名100文字チェック
         if (itemName.trim().length() > 100) {
 
             ProductDto dto = new ProductDto();

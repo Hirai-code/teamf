@@ -51,13 +51,14 @@ public class ProductAddServlet extends HttpServlet {
             return;
         }
         
-        //100字以内チェック
-        if(productName.trim().length() > 100) {
-        	request.setAttribute(
-        			"errorMsg",
-        			"商品名は１００字以内で入力してください。");
-        	
-        	request.getRequestDispatcher(
+     // 商品名100文字以内チェック
+        if (productName.trim().length() > 100) {
+
+            request.setAttribute(
+                    "errorMsg",
+                    "商品名は100文字以内で入力してください。");
+
+            request.getRequestDispatcher(
                     "/WEB-INF/jsp/ProductAdd.jsp")
                     .forward(request, response);
             return;
