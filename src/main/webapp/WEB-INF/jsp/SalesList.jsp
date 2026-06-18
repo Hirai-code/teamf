@@ -194,6 +194,18 @@
 	
 	
 	<div class="container">
+	<c:if test="${not empty message}">
+    <div style="
+        background:#d4e9e2;
+        color:#1e3932;
+        padding:12px;
+        margin-bottom:15px;
+        border-radius:8px;
+        font-weight:bold;
+    ">
+        ${message}
+    </div>
+</c:if>
 	
 		<table>
 		

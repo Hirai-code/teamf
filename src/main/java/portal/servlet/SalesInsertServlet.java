@@ -18,7 +18,7 @@ import portal.dto.SalesDto;
 
 @WebServlet("/SalesInsertServlet")
 public class SalesInsertServlet extends HttpServlet {
-	
+
 private static final long serialVersionUID = 1L;
 
 @Override
@@ -27,89 +27,53 @@ protected void doPost(
         HttpServletResponse response)
         throws ServletException, IOException {
 
-	request.setCharacterEncoding("UTF-8");
+    request.setCharacterEncoding("UTF-8");
 
-	String salesDate = request.getParameter("salesDate");
+    String salesDate = request.getParameter("salesDate");
+    String itemId = request.getParameter("itemId");
+    String quantity = request.getParameter("quantity");
+    String memo = request.getParameter("memo");
 
-	String itemId = request.getParameter("itemId");
+    ProductDao productDao = new ProductDao();
 
-	String quantity = request.getParameter("quantity");
+    ProductDto product =
+            productDao.findById(Integer.parseInt(itemId));
 
+    HttpSession session = request.getSession();
 
-	String memo = request.getParameter("memo");	
+    AccountDto loginUser =
+            (AccountDto) session.getAttribute("loginUser");
 
-	ProductDao productDao = new ProductDao();
+    if (loginUser == null) {
+        response.sendRedirect("login.jsp");
+        return;
+    }
 
-	ProductDto product =productDao.findById(
-        Integer.parseInt(itemId)
-    );	
+    SalesDto dto = new SalesDto();
 
-	HttpSession session =request.getSession();
+    dto.setSaleDate(Date.valueOf(salesDate));
+    dto.setItemId(Integer.parseInt(itemId));
+    dto.setSaleNumber(Integer.parseInt(quantity));
+    dto.setTradeName(product.getItemName());
+    dto.setUnitPrice(product.getPrice());
+    dto.setCategoryId(product.getCategoryId());
+    dto.setAccountId(loginUser.getAccountId());
+    dto.setUpdateBy(loginUser.getAccountId());
+    dto.setNote(memo);
 
-	AccountDto loginUser = (AccountDto) session.getAttribute("loginUser");
+    SalesDao dao = new SalesDao();
 
-	if(loginUser == null){
+    int result = dao.insert(dto);
 
-	    response.sendRedirect("login.jsp");
+    if (result == 0) {
+        request.setAttribute("errorMessage", "売上登録に失敗しました。");
+        request.getRequestDispatcher("/WEB-INF/jsp/SalesAdd.jsp")
+               .forward(request, response);
+        return;
+    }
 
-	    return;
-	}
-	
-	SalesDto dto = new SalesDto();
+    session.setAttribute("message", "売上の登録をしました");
 
-	dto.setSaleDate(
-        Date.valueOf(salesDate)
-	);
-
-	dto.setItemId(
-        Integer.parseInt(itemId)
-	);
-
-	dto.setSaleNumber(
-        Integer.parseInt(quantity)
-	);
-
-	dto.setTradeName(
-        product.getItemName()
-	);
-
-	dto.setUnitPrice(
-        product.getPrice()
-	);
-
-	dto.setCategoryId(
-        product.getCategoryId()
-	);
-
-	dto.setAccountId(
-        loginUser.getAccountId()
-	);
-	dto.setUpdateBy(
-        loginUser.getAccountId()
-	);
-
-	dto.setNote(
-        memo
-	);
-	SalesDao dao = new SalesDao();
-	
-	int result = dao.insert(dto);
-
-	if(result == 0){
-
-	    request.setAttribute(
-	        "errorMessage",
-	        "売上登録に失敗しました。");
-
-	    request.getRequestDispatcher(
-	    "/WEB-INF/jsp/SalesAdd.jsp")
-	    .forward(request,response);
-
-	    return;
-	}
-	
-	request.getRequestDispatcher(
-        "/WEB-INF/jsp/SalesAddComplete.jsp")
-		.forward(request,response);
-	}
+    response.sendRedirect("SalesListServlet");
+}
 }
