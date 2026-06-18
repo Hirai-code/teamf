@@ -246,6 +246,84 @@ public class AccountDao {
 
 	    return false;
 	}
+	
+	// 編集時ログインID重複チェック
+	public boolean existsLoginIdForUpdate(
+	        String loginId,
+	        int accountId) {
+
+
+	    String sql =
+	        "SELECT COUNT(*) FROM accounts " +
+	        "WHERE login_id = ? " +
+	        "AND account_id <> ? " +
+	        "AND delete_flag = 0";
+
+
+	    try(Connection con = DbUtil.getConnection();
+	        PreparedStatement ps =
+	            con.prepareStatement(sql)){
+
+
+	        ps.setString(1, loginId);
+	        ps.setInt(2, accountId);
+
+
+	        ResultSet rs =
+	            ps.executeQuery();
+
+
+	        if(rs.next()){
+	            return rs.getInt(1)>0;
+	        }
+
+
+	    }catch(Exception e){
+	        e.printStackTrace();
+	    }
+
+
+	    return false;
+	}
+	
+	// 編集時スタッフ名重複チェック
+	public boolean existsStaffNameForUpdate(
+	        String staffName,
+	        int accountId) {
+
+
+	    String sql =
+	        "SELECT COUNT(*) FROM accounts " +
+	        "WHERE staff_name = ? " +
+	        "AND account_id <> ? " +
+	        "AND delete_flag = 0";
+
+
+	    try(Connection con = DbUtil.getConnection();
+	        PreparedStatement ps =
+	            con.prepareStatement(sql)){
+
+
+	        ps.setString(1, staffName);
+	        ps.setInt(2, accountId);
+
+
+	        ResultSet rs =
+	            ps.executeQuery();
+
+
+	        if(rs.next()){
+	            return rs.getInt(1)>0;
+	        }
+
+
+	    }catch(Exception e){
+	        e.printStackTrace();
+	    }
+
+
+	    return false;
+	}
 	 
 	// =========================
 	// 削除（論理削除）
