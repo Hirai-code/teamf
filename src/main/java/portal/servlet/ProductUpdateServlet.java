@@ -63,6 +63,26 @@ public class ProductUpdateServlet extends HttpServlet {
                     .forward(request, response);
             return;
         }
+        
+        //商品名文字数チェック
+        
+        if (itemName.trim().length() > 100) {
+
+            ProductDto dto = new ProductDto();
+            dto.setItemId(itemId);
+            dto.setItemName(itemName);
+
+            request.setAttribute(
+                    "errorMsg",
+                    "商品名は100文字以内で入力してください。");
+
+            request.setAttribute("item", dto);
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/ProductEditor.jsp")
+                    .forward(request, response);
+            return;
+        }
 
         // 価格チェック
         if (priceStr == null || priceStr.trim().isEmpty()) {
@@ -82,9 +102,50 @@ public class ProductUpdateServlet extends HttpServlet {
                     .forward(request, response);
             return;
         }
+        
+        int price;
+
+        try {
+
+            price = Integer.parseInt(priceStr);
+
+            if (price < 0) {
+
+                ProductDto dto = new ProductDto();
+                dto.setItemId(itemId);
+                dto.setItemName(itemName);
+
+                request.setAttribute(
+                        "errorMsg",
+                        "価格は0以上で入力してください。");
+
+                request.setAttribute("item", dto);
+
+                request.getRequestDispatcher(
+                        "/WEB-INF/jsp/ProductEditor.jsp")
+                        .forward(request, response);
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            ProductDto dto = new ProductDto();
+            dto.setItemId(itemId);
+            dto.setItemName(itemName);
+
+            request.setAttribute(
+                    "errorMsg",
+                    "価格は整数で入力してください。");
+
+            request.setAttribute("item", dto);
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/ProductEditor.jsp")
+                    .forward(request, response);
+            return;
+        }
 
         int categoryId = Integer.parseInt(categoryIdStr);
-        int price = Integer.parseInt(priceStr);
         int sellingFlg = Integer.parseInt(sellingFlgStr);
 
         ProductDto dto = new ProductDto();

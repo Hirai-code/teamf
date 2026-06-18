@@ -8,6 +8,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import portal.dao.SalesDao;
 import portal.dto.SalesDto;
@@ -15,167 +16,42 @@ import portal.dto.SalesDto;
 @WebServlet("/SalesListServlet")
 public class SalesListServlet extends HttpServlet {
 
-
 @Override
-	protected void doGet(
-		HttpServletRequest request,
-		HttpServletResponse response)
-				throws ServletException,IOException{
+protected void doGet(
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws ServletException, IOException {
 
-		request.setCharacterEncoding("UTF-8");
-	
-		String startDate=request.getParameter("startDate");
-		String endDate=request.getParameter("endDate");
-		
-		String staffName=request.getParameter("staffName");
-		
-		String minAmount=request.getParameter("minAmount");
-		String maxAmount=request.getParameter("maxAmount");
-		
-		
-		
-		/*
-		期間チェック
-		*/
-		if(startDate != null &&
-		   !startDate.isEmpty() &&
-		   endDate != null &&
-		   !endDate.isEmpty()) {
+    request.setCharacterEncoding("UTF-8");
 
+    String startDate = request.getParameter("startDate");
+    String endDate = request.getParameter("endDate");
+    String staffName = request.getParameter("staffName");
+    String minAmount = request.getParameter("minAmount");
+    String maxAmount = request.getParameter("maxAmount");
 
-		    if(startDate.compareTo(endDate) > 0) {
+    SalesDao dao = new SalesDao();
 
-		        request.setAttribute(
-		            "errorMessage",
-		            "期間Fromは期間To以前の日付を指定してください。"
-		        );
+    List<SalesDto> list = dao.search(
+            startDate,
+            endDate,
+            staffName,
+            minAmount,
+            maxAmount
+    );
 
+    request.setAttribute("salesList", list);
 
-		        request.setAttribute(
-		            "startDate",
-		            startDate
-		        );
+    // ⭐ ここが追加部分
+    HttpSession session = request.getSession();
 
-		        request.setAttribute(
-		            "endDate",
-		            endDate
-		        );
+    String message = (String) session.getAttribute("message");
 
+    request.setAttribute("message", message);
 
-		        request.setAttribute(
-		            "staffName",
-		            staffName
-		        );
+    session.removeAttribute("message");
 
-		        request.setAttribute(
-		            "minAmount",
-		            minAmount
-		        );
-
-		        request.setAttribute(
-		            "maxAmount",
-		            maxAmount
-		        );
-
-
-		        request.getRequestDispatcher(
-		            "/WEB-INF/jsp/SalesSearch.jsp")
-		            .forward(request,response);
-
-		        return;
-
-		    }
-
-		}
-	
-	
-	
-		/*
-		金額チェック
-		*/
-		
-		if(minAmount != null &&
-				   !minAmount.isEmpty() &&
-				   maxAmount != null &&
-				   !maxAmount.isEmpty()) {
-
-
-				    if(Integer.parseInt(minAmount)
-				       >
-				       Integer.parseInt(maxAmount)) {
-
-
-				        request.setAttribute(
-				            "errorMessage",
-				            "金額Fromは金額To以下にしてください。"
-				        );
-
-
-				        request.setAttribute(
-				            "startDate",
-				            startDate
-				        );
-
-				        request.setAttribute(
-				            "endDate",
-				            endDate
-				        );
-
-				        request.setAttribute(
-				            "staffName",
-				            staffName
-				        );
-
-
-				        request.setAttribute(
-				            "minAmount",
-				            minAmount
-				        );
-
-
-				        request.setAttribute(
-				            "maxAmount",
-				            maxAmount
-				        );
-
-
-				        request.getRequestDispatcher(
-				            "/WEB-INF/jsp/SalesSearch.jsp")
-				            .forward(request,response);
-
-
-				        return;
-
-				    }
-
-				}
-	
-	
-	
-	SalesDao dao=new SalesDao();
-	
-	
-	List<SalesDto> list=
-	dao.search(
-	startDate,
-	endDate,
-	staffName,
-	minAmount,
-	maxAmount);
-	
-	
-	
-	request.setAttribute(
-	"salesList",
-	list);
-	
-	
-	
-	request.getRequestDispatcher(
-	"/WEB-INF/jsp/SalesList.jsp")
-	.forward(request,response);
-	
-	
-	}
-
+    request.getRequestDispatcher("/WEB-INF/jsp/SalesList.jsp")
+           .forward(request, response);
+}
 }
