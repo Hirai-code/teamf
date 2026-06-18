@@ -281,14 +281,29 @@ body {
             </div>
         </a>
 
-        <a href="${pageContext.request.contextPath}/AccountHomeServlet"
-   class="menu-card">
-            <div class="icon-wrapper">👥</div>
-            <div class="title">アカウント管理</div>
-            <div class="description">
-                スタッフのアカウント一覧、新規追加、権限編集を行います。
-            </div>
-        </a>
+        <%
+	if(loginUser != null &&
+	   "MANAGER".equals(loginUser.getRole())){
+	%>
+	
+	<a href="${pageContext.request.contextPath}/AccountHomeServlet"
+	   class="menu-card">
+	
+	    <div class="icon-wrapper">👥</div>
+	
+	    <div class="title">
+	        アカウント管理
+	    </div>
+	
+	    <div class="description">
+	        スタッフのアカウント一覧、新規追加、権限編集を行います。
+	    </div>
+	
+	</a>
+	
+	<%
+	}
+	%>
 
     </div>
 

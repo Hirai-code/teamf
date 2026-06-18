@@ -206,7 +206,7 @@ th{
 
         <!-- 編集（GET） -->
             <td>
-        <form action="AccountEditorServlet" method="get" style="display:inline;">
+        <form action="${pageContext.request.contextPath}/AccountEditorServlet" method="get" style="display:inline;">
             <input type="hidden" name="id" value="${acc.accountId}">
             <button type="submit" class="edit-btn">編集</button>
         </form>
