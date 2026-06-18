@@ -50,6 +50,19 @@ public class ProductAddServlet extends HttpServlet {
                     .forward(request, response);
             return;
         }
+        
+     // 商品名100文字以内チェック
+        if (productName.trim().length() > 100) {
+
+            request.setAttribute(
+                    "errorMsg",
+                    "商品名は100文字以内で入力してください。");
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/ProductAdd.jsp")
+                    .forward(request, response);
+            return;
+        }
 
         // カテゴリチェック
         if (categoryId == null || categoryId.isEmpty()) {
@@ -70,6 +83,35 @@ public class ProductAddServlet extends HttpServlet {
             request.setAttribute(
                     "errorMsg",
                     "価格が入力されていません。");
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/ProductAdd.jsp")
+                    .forward(request, response);
+            return;
+        }
+        
+        int priceValue;
+
+        try {
+            priceValue = Integer.parseInt(price);
+
+            if (priceValue < 0) {
+
+                request.setAttribute(
+                        "errorMsg",
+                        "価格は0以上で入力してください。");
+
+                request.getRequestDispatcher(
+                        "/WEB-INF/jsp/ProductAdd.jsp")
+                        .forward(request, response);
+                return;
+            }
+
+        } catch (NumberFormatException e) {
+
+            request.setAttribute(
+                    "errorMsg",
+                    "価格は整数で入力してください。");
 
             request.getRequestDispatcher(
                     "/WEB-INF/jsp/ProductAdd.jsp")
