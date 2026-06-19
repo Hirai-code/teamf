@@ -16,42 +16,48 @@ import portal.dto.SalesDto;
 @WebServlet("/SalesListServlet")
 public class SalesListServlet extends HttpServlet {
 
-@Override
-protected void doGet(
-        HttpServletRequest request,
-        HttpServletResponse response)
-        throws ServletException, IOException {
+	@Override
+	protected void doGet(
+	        HttpServletRequest request,
+	        HttpServletResponse response)
+	        throws ServletException, IOException {
 
-    request.setCharacterEncoding("UTF-8");
+	    // ①ログインチェック
+	    HttpSession session = request.getSession(false);
 
-    String startDate = request.getParameter("startDate");
-    String endDate = request.getParameter("endDate");
-    String staffName = request.getParameter("staffName");
-    String minAmount = request.getParameter("minAmount");
-    String maxAmount = request.getParameter("maxAmount");
+	    if (session == null || session.getAttribute("loginUser") == null) {
+	        response.sendRedirect(request.getContextPath() + "/login");
+	        return;
+	    }
 
-    SalesDao dao = new SalesDao();
+	    request.setCharacterEncoding("UTF-8");
 
-    List<SalesDto> list = dao.search(
-            startDate,
-            endDate,
-            staffName,
-            minAmount,
-            maxAmount
-    );
+	    String startDate = request.getParameter("startDate");
+	    String endDate = request.getParameter("endDate");
+	    String staffName = request.getParameter("staffName");
+	    String minAmount = request.getParameter("minAmount");
+	    String maxAmount = request.getParameter("maxAmount");
 
-    request.setAttribute("salesList", list);
+	    SalesDao dao = new SalesDao();
 
-    // ⭐ ここが追加部分
-    HttpSession session = request.getSession();
+	    List<SalesDto> list = dao.search(
+	            startDate,
+	            endDate,
+	            staffName,
+	            minAmount,
+	            maxAmount
+	    );
 
-    String message = (String) session.getAttribute("message");
+	    request.setAttribute("salesList", list);
 
-    request.setAttribute("message", message);
+	    // ②メッセージ処理（同じsessionを使う）
+	    String message = (String) session.getAttribute("message");
 
-    session.removeAttribute("message");
+	    request.setAttribute("message", message);
 
-    request.getRequestDispatcher("/WEB-INF/jsp/SalesList.jsp")
-           .forward(request, response);
-}
+	    session.removeAttribute("message");
+
+	    request.getRequestDispatcher("/WEB-INF/jsp/SalesList.jsp")
+	           .forward(request, response);
+	}
 }
