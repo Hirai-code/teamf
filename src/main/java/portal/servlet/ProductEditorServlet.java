@@ -7,6 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import portal.dto.AccountDto;
 
 import portal.dao.ProductDao;
 import portal.dto.ProductDto;
@@ -20,6 +22,24 @@ public class ProductEditorServlet extends HttpServlet {
             HttpServletRequest request,
             HttpServletResponse response)
             throws ServletException, IOException {
+    	HttpSession session = request.getSession(false);
+
+    	if (session == null) {
+    	    response.sendRedirect(
+    	            request.getContextPath() + "/dashboard");
+    	    return;
+    	}
+
+    	AccountDto loginUser =
+    	        (AccountDto) session.getAttribute("loginUser");
+
+    	if (loginUser == null
+    	        || !"MANAGER".equals(loginUser.getRole())) {
+
+    	    response.sendRedirect(
+    	            request.getContextPath() + "/dashboard");
+    	    return;
+    	}
 
         request.setCharacterEncoding("UTF-8");
 

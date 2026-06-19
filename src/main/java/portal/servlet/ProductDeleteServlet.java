@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import portal.dto.AccountDto;
 
 import portal.dao.ProductDao;
 
@@ -20,6 +21,25 @@ public class ProductDeleteServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
+        HttpSession session = request.getSession(false);
+
+        if (session == null) {
+            response.sendRedirect(
+                    request.getContextPath() + "/dashboard");
+            return;
+        }
+
+        AccountDto loginUser =
+                (AccountDto) session.getAttribute("loginUser");
+
+        if (loginUser == null
+                || !"MANAGER".equals(loginUser.getRole())) {
+
+            response.sendRedirect(
+                    request.getContextPath() + "/dashboard");
+            return;
+        }
+
         int itemId = Integer.parseInt(
                 request.getParameter("id"));
 
@@ -28,7 +48,7 @@ public class ProductDeleteServlet extends HttpServlet {
         dao.delete(itemId);
         
 
-        HttpSession session = request.getSession();
+        
 
         session.setAttribute(
                 "successMsg",
