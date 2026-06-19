@@ -7,6 +7,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import portal.dao.AccountDao;
 import portal.dto.AccountDto;
@@ -210,9 +211,19 @@ public class AccountInsertServlet extends HttpServlet {
         int result = dao.insert(dto);
         
         if (result > 0) {
+
+            HttpSession session = request.getSession();
+
+            session.setAttribute(
+                "successMessage",
+                "アカウントの追加が成功しました。"
+            );
+
             response.sendRedirect(
                 request.getContextPath()
-                + "/AccountHomeServlet");
+                + "/AccountHomeServlet"
+            );
+
         } else {
 
             request.setAttribute(

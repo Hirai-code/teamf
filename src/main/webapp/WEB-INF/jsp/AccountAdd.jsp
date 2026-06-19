@@ -117,7 +117,7 @@ label{
 /* ボタン */
 .button-area{
     display:flex;
-    justify-content:center;
+    justify-content:flex-end;
     gap:12px;
     margin-top:30px;
 }
