@@ -1,5 +1,6 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 
 <!DOCTYPE html>
 <html lang="ja">
@@ -176,6 +177,7 @@ td:last-child {
 </head>
 
 <body>
+<c:set var="user" value="${sessionScope.loginUser}" />
 
 <div class="header">
     <div class="header-title">☕ 商品一覧</div>
@@ -192,9 +194,11 @@ td:last-child {
     </div>
 </c:if>
 
+    <c:if test="${user.role == 'MANAGER'}">
     <a href="${pageContext.request.contextPath}/ProductAddServlet" class="add-btn">
         ＋ 新しい商品を追加
     </a>
+</c:if>
 
     <table>
 
@@ -241,20 +245,23 @@ td:last-child {
                         <td>${item.updateAt}</td>
 
                         <td>
-                            <div class="action">
+    <c:if test="${user.role == 'MANAGER'}">
+        <div class="action">
 
-                                <a href="${pageContext.request.contextPath}/ProductEditorServlet?id=${item.itemId}"
-                                            class="btn edit">
-                                                編集
-                                  </a>
-                                  <a href="${pageContext.request.contextPath}/ProductDeleteServlet?id=${item.itemId}"
-                                             class="btn delete"
-                                             onclick="return confirm('本当に削除しますか？');">
-                                                削除
-                                         </a>
+            <a href="${pageContext.request.contextPath}/ProductEditorServlet?id=${item.itemId}"
+               class="btn edit">
+                編集
+            </a>
 
-                            </div>
-                        </td>
+            <a href="${pageContext.request.contextPath}/ProductDeleteServlet?id=${item.itemId}"
+               class="btn delete"
+               onclick="return confirm('本当に削除しますか？');">
+                削除
+            </a>
+
+        </div>
+    </c:if>
+</td>
                     </tr>
 
                 </c:forEach>
