@@ -2,11 +2,16 @@ package portal.servlet;
 
 import java.io.IOException;
 
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
+import portal.dto.AccountDto;
+
 @WebServlet("/ProductAddServlet")
 public class ProductAddServlet extends HttpServlet {
 	@Override
@@ -15,18 +20,56 @@ public class ProductAddServlet extends HttpServlet {
 	        HttpServletResponse response)
 	        throws ServletException, IOException {
 
+	    HttpSession session = request.getSession(false);
+
+	    if (session == null) {
+	        response.sendRedirect(
+	                request.getContextPath() + "/dashboard");
+	        return;
+	    }
+
+	    AccountDto loginUser =
+	            (AccountDto) session.getAttribute("loginUser");
+
+	    if (loginUser == null
+	            || !"MANAGER".equals(loginUser.getRole())) {
+
+	        response.sendRedirect(
+	                request.getContextPath() + "/dashboard");
+	        return;
+	    }
+
 	    request.getRequestDispatcher(
 	            "/WEB-INF/jsp/ProductAdd.jsp")
 	            .forward(request, response);
 	}
 
-    @Override
-    protected void doPost(
-            HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+	@Override
+	protected void doPost(
+	        HttpServletRequest request,
+	        HttpServletResponse response)
+	        throws ServletException, IOException {
 
-        request.setCharacterEncoding("UTF-8");
+	    HttpSession session = request.getSession(false);
+
+	    if (session == null) {
+	        response.sendRedirect(
+	                request.getContextPath() + "/dashboard");
+	        return;
+	    }
+
+	    AccountDto loginUser =
+	            (AccountDto) session.getAttribute("loginUser");
+
+	    if (loginUser == null
+	            || !"MANAGER".equals(loginUser.getRole())) {
+
+	        response.sendRedirect(
+	                request.getContextPath() + "/dashboard");
+	        return;
+	    }
+
+	    request.setCharacterEncoding("UTF-8");
 
         String productName = request.getParameter("productName");
         String categoryId = request.getParameter("categoryId");
