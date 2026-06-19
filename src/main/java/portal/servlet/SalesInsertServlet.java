@@ -16,64 +16,249 @@ import portal.dto.AccountDto;
 import portal.dto.ProductDto;
 import portal.dto.SalesDto;
 
+
 @WebServlet("/SalesInsertServlet")
 public class SalesInsertServlet extends HttpServlet {
 
-private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-@Override
-protected void doPost(
-        HttpServletRequest request,
-        HttpServletResponse response)
-        throws ServletException, IOException {
+    @Override
+    protected void doPost(
+            HttpServletRequest request,
+            HttpServletResponse response)
+            throws ServletException, IOException {
 
-    request.setCharacterEncoding("UTF-8");
+        request.setCharacterEncoding("UTF-8");
 
-    String salesDate = request.getParameter("salesDate");
-    String itemId = request.getParameter("itemId");
-    String quantity = request.getParameter("quantity");
-    String memo = request.getParameter("memo");
+        String salesDate =
+                request.getParameter("salesDate");
 
-    ProductDao productDao = new ProductDao();
+        String itemId =
+                request.getParameter("itemId");
 
-    ProductDto product =
-            productDao.findById(Integer.parseInt(itemId));
+        String quantity =
+                request.getParameter("quantity");
 
-    HttpSession session = request.getSession();
+        String memo =
+                request.getParameter("memo");
 
-    AccountDto loginUser =
-            (AccountDto) session.getAttribute("loginUser");
+        HttpSession session =
+                request.getSession();
 
-    if (loginUser == null) {
-        response.sendRedirect("login.jsp");
-        return;
+        AccountDto loginUser =
+                (AccountDto) session.getAttribute(
+                        "loginUser");
+
+        if(loginUser == null){
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/login");
+            return;
+        }
+
+        /*
+         * 売上日チェック
+         */
+        if(salesDate == null
+                || salesDate.trim().isEmpty()){
+            forwardError(
+                    request,
+                    response,
+                    "売上日を入力してください。");
+            return;
+        }
+
+        Date saleDateValue;
+
+        try{
+            saleDateValue =
+                    Date.valueOf(salesDate);
+
+        }catch(IllegalArgumentException e){
+
+            forwardError(
+                    request,
+                    response,
+                    "売上日は正しい日付で入力してください。");
+            return;
+        }
+
+        /*
+         * 商品IDチェック
+         */
+        if(itemId == null
+                || itemId.trim().isEmpty()){
+            forwardError(
+                    request,
+                    response,
+                    "商品を選択してください。");
+            return;
+        }
+
+        int itemIdValue;
+
+        try{
+            itemIdValue =
+                    Integer.parseInt(itemId);
+
+        }catch(NumberFormatException e){
+            forwardError(
+                    request,
+                    response,
+                    "商品の指定が不正です。");
+            return;
+        }
+
+        /*
+         * 数量チェック
+         */
+        if(quantity == null
+                || quantity.trim().isEmpty()){
+
+            forwardError(
+                    request,
+                    response,
+                    "数量を入力してください。");
+            return;
+        }
+
+        int quantityValue;
+
+        try{
+            quantityValue =
+                    Integer.parseInt(quantity);
+            if(quantityValue <= 0){
+                forwardError(
+                        request,
+                        response,
+                        "数量は1以上で入力してください。");
+
+                return;
+            }
+        }catch(NumberFormatException e){
+
+            forwardError(
+                    request,
+                    response,
+                    "数量は整数で入力してください。");
+            return;
+        }
+
+        /*
+         * 商品取得
+         */
+        ProductDao productDao =
+                new ProductDao();
+        
+        ProductDto product =
+                productDao.findById(itemIdValue);
+
+        if(product == null){
+            forwardError(
+                    request,
+                    response,
+                    "商品が存在しません。");
+            return;
+        }
+
+        /*
+         * DTO作成
+         */
+        SalesDto dto =
+                new SalesDto();
+
+        dto.setSaleDate(
+                saleDateValue);
+
+        dto.setItemId(
+                itemIdValue);
+
+        dto.setSaleNumber(
+                quantityValue);
+
+
+
+        dto.setTradeName(
+                product.getItemName());
+
+        dto.setUnitPrice(
+                product.getPrice());
+
+        dto.setCategoryId(
+                product.getCategoryId());
+
+        dto.setAccountId(
+                loginUser.getAccountId());
+
+        dto.setUpdateBy(
+                loginUser.getAccountId());
+
+        dto.setNote(
+                memo);
+
+        /*
+         * 登録処理
+         */
+        SalesDao dao =
+                new SalesDao();
+
+        int result =
+                dao.insert(dto);
+
+        if(result == 0){
+
+            request.setAttribute(
+                    "errorMessage",
+                    "売上登録に失敗しました。");
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/SalesAdd.jsp")
+                    .forward(request, response);
+
+            return;
+        }
+
+        session.setAttribute(
+                "message",
+                "売上の登録をしました。");
+
+        response.sendRedirect(
+                request.getContextPath()
+                + "/SalesListServlet");
     }
 
-    SalesDto dto = new SalesDto();
+    /**
+     * エラー処理
+     */
+    private void forwardError(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            String message)
+            throws ServletException, IOException {
 
-    dto.setSaleDate(Date.valueOf(salesDate));
-    dto.setItemId(Integer.parseInt(itemId));
-    dto.setSaleNumber(Integer.parseInt(quantity));
-    dto.setTradeName(product.getItemName());
-    dto.setUnitPrice(product.getPrice());
-    dto.setCategoryId(product.getCategoryId());
-    dto.setAccountId(loginUser.getAccountId());
-    dto.setUpdateBy(loginUser.getAccountId());
-    dto.setNote(memo);
+        request.setAttribute(
+                "errorMessage",
+                message);
 
-    SalesDao dao = new SalesDao();
+        request.setAttribute(
+                "salesDate",
+                request.getParameter("salesDate"));
 
-    int result = dao.insert(dto);
+        request.setAttribute(
+                "itemId",
+                request.getParameter("itemId"));
 
-    if (result == 0) {
-        request.setAttribute("errorMessage", "売上登録に失敗しました。");
-        request.getRequestDispatcher("/WEB-INF/jsp/SalesAdd.jsp")
-               .forward(request, response);
-        return;
+        request.setAttribute(
+                "quantity",
+                request.getParameter("quantity"));
+
+        request.setAttribute(
+                "memo",
+                request.getParameter("memo"));
+
+        request.getRequestDispatcher(
+                "/WEB-INF/jsp/SalesAdd.jsp")
+                .forward(request, response);
     }
 
-    session.setAttribute("message", "売上の登録をしました");
-
-    response.sendRedirect("SalesListServlet");
-}
 }

@@ -64,6 +64,15 @@ body{
     max-width:1200px;
     margin:40px auto;
 }
+.success-message{
+    background:#d4edda;
+    color:#155724;
+    border:1px solid #c3e6cb;
+    padding:12px 20px;
+    margin-bottom:20px;
+    border-radius:8px;
+    font-weight:bold;
+}
 
 /* テーブル */
 
@@ -174,6 +183,12 @@ th{
 </div>
 
 <div class="container">
+<c:if test="${not empty sessionScope.successMessage}">
+    <div class="success-message">
+        ${sessionScope.successMessage}
+    </div>
+    <c:remove var="successMessage" scope="session"/>
+</c:if>
 
 <c:if test="${empty accountList}">
     <div class="empty-message">
@@ -214,8 +229,8 @@ th{
 
     <!-- 削除ボタン（POST） -->
     <td>
-        <form action="AccountDeleteServlet"
-              method="post"
+        <form action="${pageContext.request.contextPath}/AccountDeleteServlet"
+      method="post"
               style="display:inline;"
               onsubmit="return confirm('削除しますか？');">
 
