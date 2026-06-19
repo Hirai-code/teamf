@@ -129,7 +129,8 @@ public class SalesAddServlet extends HttpServlet {
 
         request.getRequestDispatcher(
                 "/WEB-INF/jsp/SalesAddConfirm.jsp")
-                .forward(request,response);
+
+        .forward(request,response);
     }
 
 

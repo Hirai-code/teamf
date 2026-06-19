@@ -110,7 +110,6 @@ input, select {
                 <option value="STAFF">スタッフ</option>
             </select>
         </div>
-
         <div class="button-area">
             <button type="button" class="btn back-btn" onclick="history.back()">
                 戻る
