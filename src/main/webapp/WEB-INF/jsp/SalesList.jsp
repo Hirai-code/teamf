@@ -301,11 +301,6 @@
 		
 		
 		<input type="hidden"
-		name="id"
-		value="${sale.saleId}">
-		
-		
-		<input type="hidden"
 		name="startDate"
 		value="${param.startDate}">
 		
@@ -397,16 +392,14 @@
 	
 	
 	<c:if test="${loginUser.role == 'MANAGER'
-	          || loginUser.accountId == sale.accountId}">
+          || loginUser.role == 'STAFF'}">
 
-	<form action="SalesAddServlet" method="get">
-	
-		<button class="add-btn">
-		＋
-		</button>
-	
-	</form>
-	
+    	<form action="SalesAddServlet" method="get">
+        	<button type="submit" class="add-btn">
+        	    ＋
+        	</button>
+    	</form>
+
 	</c:if>
 	
 	
