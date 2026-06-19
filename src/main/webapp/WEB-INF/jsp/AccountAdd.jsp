@@ -1,4 +1,5 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -83,6 +84,12 @@ input, select {
 
 <h1>アカウント追加</h1>
 
+<c:if test="${not empty errorMessage}">
+    <p style="color:red; text-align:center;">
+        ${errorMessage}
+    </p>
+</c:if>
+
 <!-- ここはInsert用Servletにするのが正解 -->
 <form action="${pageContext.request.contextPath}/AccountInsertServlet" method="post">
 
@@ -90,12 +97,12 @@ input, select {
 
         <div class="form-group">
             <label>ログインID</label>
-            <input type="text" name="loginId" required>
+            <input type="text" name="loginId" value="${param.loginId}" required>
         </div>
 
         <div class="form-group">
             <label>スタッフ名</label>
-            <input type="text" name="staffName" required>
+            <input type="text" name="staffName" value="${param.staffName}" required>
         </div>
 
         <div class="form-group">
@@ -106,9 +113,17 @@ input, select {
         <div class="form-group">
             <label>ロール</label>
             <select name="role">
-                <option value="MANAGER">管理者</option>
-                <option value="STAFF">スタッフ</option>
-            </select>
+            
+			    <option value="MANAGER"
+			        ${param.role == 'MANAGER' ? 'selected' : ''}>
+			        管理者
+			    </option>
+			
+			    <option value="STAFF"
+			        ${param.role == 'STAFF' ? 'selected' : ''}>
+			        スタッフ
+			    </option>
+			</select>
         </div>
         <div class="button-area">
             <button type="button" class="btn back-btn" onclick="history.back()">

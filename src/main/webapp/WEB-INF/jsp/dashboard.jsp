@@ -273,7 +273,7 @@ body {
             </div>
         </a>
 
-        <a href="SalesSearchServlet" class="menu-card">
+        <a href="${pageContext.request.contextPath}/SalesSearchServlet" class="menu-card">
             <div class="icon-wrapper">💹</div>
             <div class="title">売上管理</div>
             <div class="description">
