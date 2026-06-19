@@ -70,6 +70,20 @@ cursor:pointer;
 
 }
 
+.button-area{
+    margin-top:20px;
+    display:flex;
+    gap:10px;
+}
+
+.button-area button{
+    flex:1;
+}
+
+.back-btn{
+    background:#999;
+}
+
 
 </style>
 
@@ -86,7 +100,8 @@ cursor:pointer;
 	
 	
 	<form action="SalesEditServlet"
-	method="post">
+      method="post"
+      onsubmit="return confirm('更新しますか？');">
 	
 	
 	<input type="hidden"
@@ -128,6 +143,12 @@ cursor:pointer;
 	<button type="submit">
 		保存
 	</button>
+	
+	<button type="button"
+			class="back-btn"
+            onclick="location.href='SalesListServlet'">
+        戻る
+    </button>
 	
 	
 	
