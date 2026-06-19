@@ -174,7 +174,7 @@ body{
 
 .button-area{
     display:flex;
-    justify-content:center;
+    justify-content:flex-end;
     gap:12px;
 
     margin-top:30px;
@@ -255,7 +255,8 @@ body{
     </c:if>
 
     <form action="${pageContext.request.contextPath}/AccountUpdateServlet"
-          method="post">
+      method="post"
+      onsubmit="return confirm('アカウント情報を更新しますか？');">
 
         <input type="hidden"
                name="accountId"
@@ -327,18 +328,18 @@ body{
 
         <div class="button-area">
 
-            <button type="button"
-                    class="btn btn-back"
-                    onclick="location.href='AccountHomeServlet'">
-                戻る
-            </button>
+    <button type="button"
+            class="btn btn-back"
+            onclick="location.href='${pageContext.request.contextPath}/AccountHomeServlet'">
+        戻る
+    </button>
 
-            <button type="submit"
-                    class="btn btn-save">
-                保存
-            </button>
+    <button type="submit"
+            class="btn btn-save">
+        保存
+    </button>
 
-        </div>
+</div>
 
     </form>
 
