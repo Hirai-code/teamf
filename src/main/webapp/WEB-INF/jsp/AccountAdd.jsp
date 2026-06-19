@@ -1,143 +1,222 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<title>アカウント追加</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>アカウント追加 | Cafe売上管理システム</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: "Yu Gothic", sans-serif;
-    background: #f2f6f3;
+
+:root{
+    --sb-dark-green:#1e3932;
+    --sb-light-green:#00704a;
+    --sb-accent-green:#d4e9e2;
+    --sb-warm-white:#f2f0eb;
+
+    --text-dark:#212121;
+    --danger-red:#d9534f;
 }
 
-h1 {
-    text-align: center;
-    color: #006241;
-    margin-top: 30px;
+body{
+    margin:0;
+    font-family:"Noto Sans JP","Yu Gothic",sans-serif;
+    background:var(--sb-warm-white);
+    color:var(--text-dark);
 }
 
-.form-box {
-    width: 500px;
-    margin: 30px auto;
-    background: #ffffff;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+/* ヘッダー */
+.header{
+    background:var(--sb-dark-green);
+    color:white;
+    padding:20px 40px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 4px 12px rgba(0,0,0,0.1);
 }
 
-.form-group {
-    margin-bottom: 20px;
+.header-title{
+    font-size:22px;
+    font-weight:700;
 }
 
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
+.top-right{
+    display:flex;
+    gap:10px;
 }
 
-input, select {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.nav-btn{
+    color:white;
+    text-decoration:none;
+    background:rgba(255,255,255,0.15);
+    padding:8px 16px;
+    border-radius:20px;
+    font-size:14px;
 }
 
-.button-area {
-    display: flex;
-    justify-content: flex-end;
-    gap: 10px;
-    margin-top: 30px;
+.nav-btn:hover{
+    background:var(--sb-light-green);
 }
 
-.btn {
-    border: none;
-    padding: 10px 25px;
-    border-radius: 5px;
-    cursor: pointer;
+/* コンテナ */
+.container{
+    width:95%;
+    max-width:800px;
+    margin:40px auto;
 }
 
-.back-btn {
-    background: #999;
-    color: white;
+.card{
+    background:white;
+    border-radius:12px;
+    padding:35px;
+    box-shadow:0 6px 16px rgba(0,0,0,0.05);
 }
 
-.back-btn:hover {
-    opacity: 0.8;
+.section-title{
+    margin-top:0;
+    margin-bottom:25px;
+    color:var(--sb-dark-green);
+    border-bottom:2px solid var(--sb-accent-green);
+    padding-bottom:10px;
 }
 
-.next-btn {
-    background: #006241;
-    color: white;
+/* エラー */
+.error-box{
+    background:#ffeaea;
+    border:1px solid #f3c1c1;
+    color:var(--danger-red);
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:20px;
 }
 
-.next-btn:hover {
-    opacity: 0.85;
+/* フォーム */
+.form-group{
+    margin-bottom:20px;
 }
+
+label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:700;
+    color:var(--sb-dark-green);
+}
+
+.form-control{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    box-sizing:border-box;
+}
+
+/* ボタン */
+.button-area{
+    display:flex;
+    justify-content:center;
+    gap:12px;
+    margin-top:30px;
+}
+
+.btn{
+    border:none;
+    border-radius:20px;
+    padding:10px 24px;
+    color:white;
+    cursor:pointer;
+    font-size:14px;
+    transition:0.2s;
+}
+
+.btn:hover{
+    opacity:0.85;
+    transform:translateY(-1px);
+}
+
+.btn-back{
+    background:#6c757d;
+}
+
+.btn-save{
+    background:var(--sb-light-green);
+}
+
 </style>
+
+<script>
+function confirmSubmit(){
+    return confirm("この内容でアカウントを追加しますか？");
+}
+</script>
 
 </head>
 
 <body>
 
-<h1>アカウント追加</h1>
+<!-- ヘッダー -->
+<div class="header">
+    <div class="header-title">👤 アカウント追加</div>
 
-<c:if test="${not empty errorMessage}">
-    <p style="color:red; text-align:center;">
-        ${errorMessage}
-    </p>
-</c:if>
+    <div class="top-right">
+        <a href="AccountHomeServlet" class="nav-btn">📋 アカウント一覧</a>
+        <a href="${pageContext.request.contextPath}/dashboard" class="nav-btn">← メインメニュー</a>
+    </div>
+</div>
 
-<!-- ここはInsert用Servletにするのが正解 -->
-<form action="${pageContext.request.contextPath}/AccountInsertServlet" method="post">
+<div class="container">
+<div class="card">
 
-    <div class="form-box">
+    <h2 class="section-title">アカウント情報</h2>
+
+    <c:if test="${not empty errorMessage}">
+        <div class="error-box">${errorMessage}</div>
+    </c:if>
+
+    <form action="${pageContext.request.contextPath}/AccountInsertServlet"
+          method="post"
+          onsubmit="return confirmSubmit();">
 
         <div class="form-group">
             <label>ログインID</label>
-            <input type="text" name="loginId" value="${param.loginId}" required>
+            <input type="text" name="loginId" value="${param.loginId}" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label>スタッフ名</label>
-            <input type="text" name="staffName" value="${param.staffName}" required>
+            <input type="text" name="staffName" value="${param.staffName}" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label>パスワード</label>
-            <input type="password" name="password" required>
+            <input type="password" name="password" class="form-control" required>
         </div>
 
         <div class="form-group">
             <label>ロール</label>
-            <select name="role">
-            
-			    <option value="MANAGER"
-			        ${param.role == 'MANAGER' ? 'selected' : ''}>
-			        管理者
-			    </option>
-			
-			    <option value="STAFF"
-			        ${param.role == 'STAFF' ? 'selected' : ''}>
-			        スタッフ
-			    </option>
-			</select>
+            <select name="role" class="form-control">
+                <option value="MANAGER" ${param.role == 'MANAGER' ? 'selected' : ''}>店長</option>
+                <option value="STAFF" ${param.role == 'STAFF' ? 'selected' : ''}>売上登録専用</option>
+            </select>
         </div>
+
         <div class="button-area">
-            <button type="button" class="btn back-btn" onclick="history.back()">
+            <button type="button" class="btn btn-back" onclick="history.back()">
                 戻る
             </button>
 
-            <button type="submit" class="btn next-btn">
-                確認
+            <button type="submit" class="btn btn-save">
+                登録
             </button>
         </div>
 
-    </div>
+    </form>
 
-</form>
+</div>
+</div>
 
 </body>
 </html>
