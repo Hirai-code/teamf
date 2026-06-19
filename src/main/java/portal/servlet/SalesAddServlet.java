@@ -28,20 +28,31 @@ public class SalesAddServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
+        HttpSession session = request.getSession();
+
+        AccountDto loginUser = (AccountDto) session.getAttribute("loginUser");
+
+        if(loginUser == null){
+            response.sendRedirect(
+                    request.getContextPath() + "/login");
+            return;
+        }
 
         ProductDao dao = new ProductDao();
-
 
         request.setAttribute(
                 "itemList",
                 dao.findAll()
         );
 
+        request.setAttribute(
+                "loginUser",
+                loginUser
+        );
 
         request.getRequestDispatcher(
                 "/WEB-INF/jsp/SalesAdd.jsp")
                 .forward(request,response);
-
     }
 
 
@@ -53,96 +64,58 @@ public class SalesAddServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-
         request.setCharacterEncoding("UTF-8");
 
+        String salesDate = request.getParameter("salesDate");
+
+        String itemId = request.getParameter("itemId");
+
+        String quantity = request.getParameter("quantity");
+
+        String memo = request.getParameter("memo");
 
 
-        String salesDate =
-                request.getParameter("salesDate");
+        ProductDao productDao = new ProductDao();
 
-
-        String itemId =
-                request.getParameter("itemId");
-
-
-        String quantity =
-                request.getParameter("quantity");
-
-
-        String memo =
-                request.getParameter("memo");
-
-
-
-
-        ProductDao productDao =
-                new ProductDao();
-
-
-
-        ProductDto product =
-                productDao.findById(
+        ProductDto product = productDao.findById(
                         Integer.parseInt(itemId)
                 );
-
-
-
 
         HttpSession session =
                 request.getSession();
 
-
-
-        AccountDto loginUser =
-                (AccountDto)
+        AccountDto loginUser = (AccountDto)
                 session.getAttribute("loginUser");
 
-
         if(loginUser == null){
-
             response.sendRedirect(
                 "login.jsp");
-
             return;
         }
-
 
         request.setAttribute(
                 "salesDate",
                 salesDate);
 
-
-
         request.setAttribute(
                 "itemId",
                 itemId);
-
-
 
         request.setAttribute(
                 "quantity",
                 quantity);
 
-
-
         request.setAttribute(
                 "memo",
                 memo);
-
-
 
         request.setAttribute(
                 "itemName",
                 product.getItemName());
 
-
-
         request.setAttribute(
                 "unitPrice",
                 product.getPrice());
-
-
 
         request.setAttribute(
                 "totalAmount",
@@ -150,19 +123,14 @@ public class SalesAddServlet extends HttpServlet {
                 *
                 Integer.parseInt(quantity));
 
-
-
         request.setAttribute(
                 "loginUser",
                 loginUser);
 
-
-
         request.getRequestDispatcher(
                 "/WEB-INF/jsp/SalesAddConfirm.jsp")
-                .forward(request,response);
 
-
+        .forward(request,response);
     }
 
 

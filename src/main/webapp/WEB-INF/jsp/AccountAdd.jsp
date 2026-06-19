@@ -106,11 +106,10 @@ input, select {
         <div class="form-group">
             <label>ロール</label>
             <select name="role">
-                <option value="1">管理者</option>
-                <option value="0">スタッフ</option>
+                <option value="MANAGER">管理者</option>
+                <option value="STAFF">スタッフ</option>
             </select>
         </div>
-
         <div class="button-area">
             <button type="button" class="btn back-btn" onclick="history.back()">
                 戻る
