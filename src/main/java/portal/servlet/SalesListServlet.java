@@ -16,48 +16,42 @@ import portal.dto.SalesDto;
 @WebServlet("/SalesListServlet")
 public class SalesListServlet extends HttpServlet {
 
-	@Override
-	protected void doGet(
-	        HttpServletRequest request,
-	        HttpServletResponse response)
-	        throws ServletException, IOException {
+@Override
+protected void doGet(
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws ServletException, IOException {
 
-	    // ①ログインチェック
-	    HttpSession session = request.getSession(false);
+    request.setCharacterEncoding("UTF-8");
 
-	    if (session == null || session.getAttribute("loginUser") == null) {
-	        response.sendRedirect(request.getContextPath() + "/login");
-	        return;
-	    }
+    String startDate = request.getParameter("startDate");
+    String endDate = request.getParameter("endDate");
+    String staffName = request.getParameter("staffName");
+    String minAmount = request.getParameter("minAmount");
+    String maxAmount = request.getParameter("maxAmount");
 
-	    request.setCharacterEncoding("UTF-8");
+    SalesDao dao = new SalesDao();
 
-	    String startDate = request.getParameter("startDate");
-	    String endDate = request.getParameter("endDate");
-	    String staffName = request.getParameter("staffName");
-	    String minAmount = request.getParameter("minAmount");
-	    String maxAmount = request.getParameter("maxAmount");
+    List<SalesDto> list = dao.search(
+            startDate,
+            endDate,
+            staffName,
+            minAmount,
+            maxAmount
+    );
 
-	    SalesDao dao = new SalesDao();
+    request.setAttribute("salesList", list);
 
-	    List<SalesDto> list = dao.search(
-	            startDate,
-	            endDate,
-	            staffName,
-	            minAmount,
-	            maxAmount
-	    );
+    // ⭐ ここが追加部分
+    HttpSession session = request.getSession();
 
-	    request.setAttribute("salesList", list);
+    String message = (String) session.getAttribute("message");
 
-	    // ②メッセージ処理（同じsessionを使う）
-	    String message = (String) session.getAttribute("message");
+    request.setAttribute("message", message);
 
-	    request.setAttribute("message", message);
+    session.removeAttribute("message");
 
-	    session.removeAttribute("message");
-
-	    request.getRequestDispatcher("/WEB-INF/jsp/SalesList.jsp")
-	           .forward(request, response);
-	}
+    request.getRequestDispatcher("/WEB-INF/jsp/SalesList.jsp")
+           .forward(request, response);
+}
 }

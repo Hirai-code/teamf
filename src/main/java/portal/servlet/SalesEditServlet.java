@@ -15,81 +15,44 @@ import portal.dto.SalesDto;
 @WebServlet("/SalesEditServlet")
 public class SalesEditServlet extends HttpServlet {
 
-    private static final long serialVersionUID = 1L;
+private static final long serialVersionUID = 1L;
 
-    // =========================
-    // 売上編集画面表示（GET）
-    // =========================
-    @Override
-    protected void doGet(
-            HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+@Override
+protected void doGet(
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws ServletException, IOException {
 
-        // ①ログインチェック（最初）
-        HttpSession session = request.getSession(false);
+    String id = request.getParameter("id");
 
-        if (session == null || session.getAttribute("loginUser") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
+    SalesDao dao = new SalesDao();
 
-        String id = request.getParameter("id");
+    SalesDto sale = dao.findById(Integer.parseInt(id));
 
-        // IDなしは一覧へ戻す
-        if (id == null || id.isEmpty()) {
-            response.sendRedirect(request.getContextPath() + "/SalesListServlet");
-            return;
-        }
+    request.setAttribute("sale", sale);
 
-        SalesDao dao = new SalesDao();
+    request.getRequestDispatcher("/WEB-INF/jsp/SalesEdit.jsp")
+           .forward(request, response);
+}
 
-        SalesDto sale = dao.findById(Integer.parseInt(id));
+@Override
+protected void doPost(
+        HttpServletRequest request,
+        HttpServletResponse response)
+        throws ServletException, IOException {
 
-        // データがない場合も一覧へ
-        if (sale == null) {
-            response.sendRedirect(request.getContextPath() + "/SalesListServlet");
-            return;
-        }
+    request.setCharacterEncoding("UTF-8");
 
-        request.setAttribute("sale", sale);
+    int saleId = Integer.parseInt(request.getParameter("saleId"));
+    String note = request.getParameter("note");
 
-        // 編集画面へ
-        request.getRequestDispatcher("/WEB-INF/jsp/SalesEdit.jsp")
-               .forward(request, response);
-    }
+    SalesDao dao = new SalesDao();
 
-    // =========================
-    // 更新処理（POST）
-    // =========================
-    @Override
-    protected void doPost(
-            HttpServletRequest request,
-            HttpServletResponse response)
-            throws ServletException, IOException {
+    dao.updateNote(saleId, note);
 
-        // ①ログインチェック（最初）
-        HttpSession session = request.getSession(false);
+    HttpSession session = request.getSession();
+    session.setAttribute("message", "売上の更新をしました");
 
-        if (session == null || session.getAttribute("loginUser") == null) {
-            response.sendRedirect(request.getContextPath() + "/login");
-            return;
-        }
-
-        request.setCharacterEncoding("UTF-8");
-
-        // パラメータ取得
-        int saleId = Integer.parseInt(request.getParameter("saleId"));
-        String note = request.getParameter("note");
-
-        // 更新処理
-        SalesDao dao = new SalesDao();
-        dao.updateNote(saleId, note);
-
-        // メッセージ保存
-        session.setAttribute("message", "売上を更新しました");
-
-        // 一覧へ戻る
-        response.sendRedirect(request.getContextPath() + "/SalesListServlet");
-    }
+    response.sendRedirect("SalesListServlet");
+}
 }
