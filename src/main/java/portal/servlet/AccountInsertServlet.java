@@ -7,7 +7,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import portal.dao.AccountDao;
 import portal.dto.AccountDto;
@@ -28,36 +27,18 @@ public class AccountInsertServlet extends HttpServlet {
         String password = request.getParameter("password");
         String role = request.getParameter("role");
 
-//        AccountDao dao = new AccountDao();
+        AccountDao dao = new AccountDao();
         
-//        AccountDto dto = new AccountDto();
-//        dto.setLoginId(loginId);
-//        dto.setStaffName(staffName);
-//        dto.setPassword(password);
-//        dto.setRole(role);
+        AccountDto dto = new AccountDto();
+        dto.setLoginId(loginId);
+        dto.setStaffName(staffName);
+        dto.setPassword(password);
+        dto.setRole(role);
 
 
-        /*
-         * ログインIDチェック
-         */
-        if(loginId == null
-                || loginId.trim().isEmpty()){
-        	request.setAttribute(
-                    "errorMessage",
-                    "ログインIDを入力してください。");
-        	
-                request.getRequestDispatcher(
-                    "/WEB-INF/jsp/AccountAdd.jsp")
-                    .forward(request, response);
-            return;
-
-        }
-
-        loginId = loginId.trim();
-
-        
-        if (loginId.length() < 4
-            || loginId.length() > 50) {
+        if (loginId == null
+                || loginId.length() < 4
+                || loginId.length() > 50) {
 
             request.setAttribute(
                 "errorMessage",
@@ -70,30 +51,8 @@ public class AccountInsertServlet extends HttpServlet {
             return;
         }
         
-        /*
-         * スタッフ名チェック
-         */
-        if(staffName == null
-                || staffName.trim().isEmpty()){
-
-
-        	request.setAttribute(
-                    "errorMessage",
-                    "スタッフ名を入力してください。");
-
-                request.getRequestDispatcher(
-                    "/WEB-INF/jsp/AccountAdd.jsp")
-                    .forward(request, response);
-
-
-            return;
-
-        }
-        
-        staffName = staffName.trim();
-
-        
-        if (staffName.length() < 1
+        if (staffName == null
+                || staffName.length() < 1
                 || staffName.length() > 50) {
 
             request.setAttribute(
@@ -107,47 +66,8 @@ public class AccountInsertServlet extends HttpServlet {
             return;
         }
         
-        /*
-         * パスワードチェック
-         */
-        if(password == null
-                || password.trim().isEmpty()){
-
-
-        	request.setAttribute(
-                    "errorMessage",
-                    "パスワードを入力してください。");
-
-                request.getRequestDispatcher(
-                    "/WEB-INF/jsp/AccountAdd.jsp")
-                    .forward(request, response);
-
-
-            return;
-
-        }
-        
-        /*
-         * 権限チェック
-         */
-        if(role == null
-                || role.trim().isEmpty()){
-
-
-        	request.setAttribute(
-                    "errorMessage",
-                    "権限を選択してください。");
-
-        	request.getRequestDispatcher(
-                    "/WEB-INF/jsp/AccountAdd.jsp")
-                    .forward(request, response);
-
-        	
-            return;
-
-        }
-
-        if (password.length() < 8) {
+        if (password == null
+                || password.length() < 8) {
 
             request.setAttribute(
                 "errorMessage",
@@ -160,11 +80,7 @@ public class AccountInsertServlet extends HttpServlet {
             return;
         }
         
-        AccountDao dao = new AccountDao();
         
-        /*
-         * ログインID重複チェック
-         */
         if (dao.existsLoginId(loginId)) {
 
             request.setAttribute(
@@ -178,9 +94,6 @@ public class AccountInsertServlet extends HttpServlet {
             return;
         }
         
-        /*
-         * スタッフ名重複チェック
-         */
         if (dao.existsStaffName(staffName)) {
 
             request.setAttribute(
@@ -194,36 +107,12 @@ public class AccountInsertServlet extends HttpServlet {
             return;
         }
 
-        /*
-         * DTO作成
-         */
-        AccountDto dto =
-                new AccountDto();
-        
-        dto.setLoginId(loginId);
-        dto.setStaffName(staffName);
-        dto.setPassword(password);
-        dto.setRole(role);
-        
-        /*
-         * 登録処理
-         */
         int result = dao.insert(dto);
         
         if (result > 0) {
-
-            HttpSession session = request.getSession();
-
-            session.setAttribute(
-                "successMessage",
-                "アカウントの追加が成功しました。"
-            );
-
             response.sendRedirect(
                 request.getContextPath()
-                + "/AccountHomeServlet"
-            );
-
+                + "/AccountHomeServlet");
         } else {
 
             request.setAttribute(
@@ -235,5 +124,4 @@ public class AccountInsertServlet extends HttpServlet {
                 .forward(request, response);
         }
     }
-    
 }
