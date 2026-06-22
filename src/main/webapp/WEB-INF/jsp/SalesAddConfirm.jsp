@@ -354,10 +354,8 @@ body {
 売上日
 </div>
 
-<div class="confirm-value">
-
-${salesDate}
-
+<div class="amount-box">
+	${salesDate}
 </div>
 
 </div>
@@ -369,31 +367,11 @@ ${salesDate}
 <div class="confirm-group">
 
 <div class="confirm-label">
-商品名
+	商品名
 </div>
 
-<div class="confirm-value">
-
-${itemName}
-
-</div>
-
-</div>
-
-
-
-
-
-<div class="confirm-group">
-
-<div class="confirm-label">
-販売時単価
-</div>
-
-<div class="confirm-value">
-
-${unitPrice} 円
-
+<div class="amount-box">
+	${itemName}
 </div>
 
 </div>
@@ -405,45 +383,47 @@ ${unitPrice} 円
 <div class="confirm-group">
 
 <div class="confirm-label">
-数量
+	販売時単価
 </div>
 
-<div class="confirm-value">
-
-${quantity}
-
+<div class="amount-box">
+<span style="color:#00704a">
+	${unitPrice} 
+</span>
+円
 </div>
 
 </div>
-
-
 
 
 
 <div class="confirm-group">
 
+<div class="confirm-label">
+	数量
+</div>
+
+<div class="amount-box">
+	${quantity}
+</div>
+
+</div>
+
+
+
+<div class="confirm-group">
 
 <div class="confirm-label">
-
 合計金額
-
 </div>
-
 
 <div class="amount-box">
 
-
 <span class="total">
-
-${totalAmount}
-
+	${totalAmount}
 </span>
-
 円
-
-
 </div>
-
 
 </div>
 
@@ -461,12 +441,9 @@ ${totalAmount}
 </div>
 
 
-<div class="confirm-value">
-
-${loginUser.staffName}
-
+<div class="amount-box">
+	${loginUser.staffName}
 </div>
-
 
 </div>
 
@@ -482,15 +459,9 @@ ${loginUser.staffName}
 メモ
 
 </div>
-
-
-<div class="confirm-value">
-
-${memo}
-
+<div class="amount-box">
+	${memo}
 </div>
-
-
 </div>
 
 

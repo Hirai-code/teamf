@@ -11,61 +11,52 @@ import portal.util.DbUtil;
 
 public class SalesDao {
 
-	private static final String SELECT_ALL =
-			"SELECT s.sale_id, s.sale_date, s.account_id, a.staff_name, "
-			          + "s.trade_name, s.unit_price, s.sale_number, s.note, s.updated_at "
-			          + "FROM sales s "
-			          + "JOIN accounts a ON s.account_id = a.account_id "
-			          + "WHERE s.deleted_flg = 0 "
-			          + "ORDER BY s.sale_date DESC";
+    // =========================
+    // 一覧取得
+    // =========================
+    private static final String SELECT_ALL =
+            "SELECT s.sale_id, s.sale_date, s.account_id, a.staff_name, " +
+            "s.trade_name, s.unit_price, s.sale_number, s.note, s.updated_at " +
+            "FROM sales s " +
+            "JOIN accounts a ON s.account_id = a.account_id " +
+            "WHERE s.deleted_flg = 0 " +
+            "ORDER BY s.sale_date DESC";
 
     public List<SalesDto> findAll() {
 
-        List<SalesDto> salesList = new ArrayList<>();
+        List<SalesDto> list = new ArrayList<>();
 
         try (Connection con = DbUtil.getConnection();
-             PreparedStatement ps =
-                     con.prepareStatement(SELECT_ALL);
+             PreparedStatement ps = con.prepareStatement(SELECT_ALL);
              ResultSet rs = ps.executeQuery()) {
 
             while (rs.next()) {
 
                 SalesDto dto = new SalesDto();
 
-                dto.setSaleId(
-                        rs.getInt("sale_id"));
-
-                dto.setSaleDate(
-                        rs.getDate("sale_date"));
-
-                dto.setAccountId(
-                        rs.getInt("account_id"));
-                
-                dto.setTradeName(
-                        rs.getString("trade_name"));
-
-                dto.setUnitPrice(
-                        rs.getInt("unit_price"));
-
-                dto.setSaleNumber(
-                        rs.getInt("sale_number"));
-                
-                dto.setNote(
-                        rs.getString("note"));
-                dto.setStaffName(
-                		rs.getString("staff_name"));
+                dto.setSaleId(rs.getInt("sale_id"));
+                dto.setSaleDate(rs.getDate("sale_date"));
+                dto.setAccountId(rs.getInt("account_id"));
+                dto.setStaffName(rs.getString("staff_name"));
+                dto.setTradeName(rs.getString("trade_name"));
+                dto.setUnitPrice(rs.getInt("unit_price"));
+                dto.setSaleNumber(rs.getInt("sale_number"));
+                dto.setNote(rs.getString("note"));
                 dto.setUpdateAt(rs.getTimestamp("updated_at"));
-                
-                salesList.add(dto);
+
+                list.add(dto);
             }
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        return salesList;
+        return list;
     }
-    
+
+    // =========================
+    // 検索（改善版）
+    // =========================
     public List<SalesDto> search(
             String startDate,
             String endDate,
@@ -75,67 +66,56 @@ public class SalesDao {
 
         List<SalesDto> list = new ArrayList<>();
 
-        String sql =
-                "SELECT "
-              + "s.sale_id, "
-              + "s.sale_date, "
-              + "s.account_id, "
-              + "a.staff_name, "
-              + "s.trade_name, "
-              + "s.unit_price, "
-              + "s.sale_number, "
-              + "s.note, "
-              + "s.updated_at "
-              + "FROM sales s "
-              + "JOIN accounts a "
-              + "ON s.account_id = a.account_id "
-              + "WHERE s.deleted_flg = 0 ";
+        StringBuilder sql = new StringBuilder();
+
+        sql.append(
+            "SELECT s.sale_id, s.sale_date, s.account_id, a.staff_name, " +
+            "s.trade_name, s.unit_price, s.sale_number, s.note, s.updated_at " +
+            "FROM sales s " +
+            "JOIN accounts a ON s.account_id = a.account_id " +
+            "WHERE s.deleted_flg = 0 "
+        );
+
+        List<Object> params = new ArrayList<>();
 
         if (startDate != null && !startDate.isEmpty()) {
-            sql += " AND s.sale_date >= ? ";
+            sql.append(" AND s.sale_date >= ? ");
+            params.add(startDate);
         }
 
         if (endDate != null && !endDate.isEmpty()) {
-            sql += " AND s.sale_date <= ? ";
+            sql.append(" AND s.sale_date <= ? ");
+            params.add(endDate);
         }
 
         if (staffName != null && !staffName.isEmpty()) {
-            sql += " AND a.staff_name LIKE ? ";
+            sql.append(" AND a.staff_name LIKE ? ");
+            params.add("%" + staffName + "%");
         }
 
         if (minAmount != null && !minAmount.isEmpty()) {
-            sql += " AND (s.unit_price * s.sale_number) >= ? ";
+            sql.append(" AND (s.unit_price * s.sale_number) >= ? ");
+            params.add(Integer.parseInt(minAmount));
         }
 
         if (maxAmount != null && !maxAmount.isEmpty()) {
-            sql += " AND (s.unit_price * s.sale_number) <= ? ";
+            sql.append(" AND (s.unit_price * s.sale_number) <= ? ");
+            params.add(Integer.parseInt(maxAmount));
         }
 
-        sql += " ORDER BY s.sale_date DESC";
+        sql.append(" ORDER BY s.sale_date DESC ");
 
         try (Connection con = DbUtil.getConnection();
-             PreparedStatement ps = con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql.toString())) {
 
-            int i = 1;
+            for (int i = 0; i < params.size(); i++) {
+                Object param = params.get(i);
 
-            if (startDate != null && !startDate.isEmpty()) {
-                ps.setString(i++, startDate);
-            }
-
-            if (endDate != null && !endDate.isEmpty()) {
-                ps.setString(i++, endDate);
-            }
-
-            if (staffName != null && !staffName.isEmpty()) {
-                ps.setString(i++, "%" + staffName + "%");
-            }
-
-            if (minAmount != null && !minAmount.isEmpty()) {
-                ps.setInt(i++, Integer.parseInt(minAmount));
-            }
-
-            if (maxAmount != null && !maxAmount.isEmpty()) {
-                ps.setInt(i++, Integer.parseInt(maxAmount));
+                if (param instanceof Integer) {
+                    ps.setInt(i + 1, (Integer) param);
+                } else {
+                    ps.setString(i + 1, (String) param);
+                }
             }
 
             try (ResultSet rs = ps.executeQuery()) {
@@ -161,42 +141,34 @@ public class SalesDao {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
+
         return list;
     }
-    
-    
-    
+
+    // =========================
+    // 登録
+    // =========================
     public int insert(SalesDto dto) {
 
-    	String sql =
-    		    "INSERT INTO sales ("+
-    		    "sale_date,"+
-    		    "account_id,"+
-    		    "category_id,"+
-    		    "item_id,"+
-    		    "trade_name,"+
-    		    "unit_price,"+
-    		    "sale_number,"+
-    		    "note,"+
-    		    "deleted_flg,"+
-    		    "update_by"+
-    		    ") VALUES (?,?,?,?,?,?,?,?,?,?)";
+        String sql =
+            "INSERT INTO sales (" +
+            "sale_date, account_id, category_id, item_id, trade_name, " +
+            "unit_price, sale_number, note, deleted_flg, update_by" +
+            ") VALUES (?,?,?,?,?,?,?,?,?,?)";
 
         try (Connection con = DbUtil.getConnection();
-             PreparedStatement ps =
-                 con.prepareStatement(sql)) {
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-        	ps.setDate(1,dto.getSaleDate());
-        	ps.setInt(2,dto.getAccountId());
-        	ps.setInt(3,dto.getCategoryId());
-        	ps.setInt(4,dto.getItemId());
-        	ps.setString(5,dto.getTradeName());
-        	ps.setInt(6,dto.getUnitPrice());
-        	ps.setInt(7,dto.getSaleNumber());
-        	ps.setString(8,dto.getNote());
-        	ps.setInt(9,0);
-        	ps.setInt(10,dto.getUpdateBy());
+            ps.setDate(1, dto.getSaleDate());
+            ps.setInt(2, dto.getAccountId());
+            ps.setInt(3, dto.getCategoryId());
+            ps.setInt(4, dto.getItemId());
+            ps.setString(5, dto.getTradeName());
+            ps.setInt(6, dto.getUnitPrice());
+            ps.setInt(7, dto.getSaleNumber());
+            ps.setString(8, dto.getNote());
+            ps.setInt(9, 0);
+            ps.setInt(10, dto.getUpdateBy());
 
             return ps.executeUpdate();
 
@@ -206,119 +178,90 @@ public class SalesDao {
 
         return 0;
     }
-    
+
+    // =========================
+    // 削除（論理削除）
+    // =========================
     public int delete(int saleId) {
 
-
         String sql =
-            "UPDATE sales "
-          + "SET deleted_flg = 1 "
-          + "WHERE sale_id = ?";
+            "UPDATE sales SET deleted_flg = 1 WHERE sale_id = ?";
 
-
-        try(Connection con = DbUtil.getConnection();
-            PreparedStatement ps =
-                con.prepareStatement(sql)){
-
+        try (Connection con = DbUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
             ps.setInt(1, saleId);
-
-
             return ps.executeUpdate();
 
-
-        }catch(Exception e){
-
+        } catch (Exception e) {
             e.printStackTrace();
-
         }
 
-
         return 0;
-
     }
-    
-    public SalesDto findById(int saleId){
+
+    // =========================
+    // 1件取得
+    // =========================
+    public SalesDto findById(int saleId) {
 
         SalesDto dto = null;
 
         String sql =
-            "SELECT "
-          + "s.sale_id,"
-          + "s.sale_date,"
-          + "s.trade_name,"
-          + "s.unit_price,"
-          + "s.sale_number,"
-          + "s.note,"
-          + "s.account_id,"
-          + "a.staff_name "
-          + "FROM sales s "
-          + "JOIN accounts a "
-          + "ON s.account_id=a.account_id "
-          + "WHERE s.sale_id=? "
-          + "AND s.deleted_flg=0";
-        
-        try(Connection con=DbUtil.getConnection();
-        
-        	PreparedStatement ps= con.prepareStatement(sql)){
-            
-        	ps.setInt(1,saleId);
-            
-        	ResultSet rs = ps.executeQuery();
-            
-        	if(rs.next()){
-                dto=new SalesDto();
-                dto.setSaleId(
-                    rs.getInt("sale_id")
-                );
-                dto.setSaleDate(
-                    rs.getDate("sale_date")
-                );
-                dto.setTradeName(
-                    rs.getString("trade_name")
-                );
-                dto.setUnitPrice(
-                    rs.getInt("unit_price")
-                );
-                dto.setSaleNumber(
-                    rs.getInt("sale_number")
-                );
-                dto.setNote(
-                    rs.getString("note")
-                );
-                dto.setStaffName(
-                    rs.getString("staff_name")
-                );
-                dto.setAccountId(
-                    rs.getInt("account_id")
-                );
+            "SELECT s.sale_id, s.sale_date, s.trade_name, s.unit_price, " +
+            "s.sale_number, s.note, s.account_id, a.staff_name " +
+            "FROM sales s " +
+            "JOIN accounts a ON s.account_id = a.account_id " +
+            "WHERE s.sale_id = ? AND s.deleted_flg = 0";
+
+        try (Connection con = DbUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
+
+            ps.setInt(1, saleId);
+
+            try (ResultSet rs = ps.executeQuery()) {
+
+                if (rs.next()) {
+
+                    dto = new SalesDto();
+                    dto.setSaleId(rs.getInt("sale_id"));
+                    dto.setSaleDate(rs.getDate("sale_date"));
+                    dto.setTradeName(rs.getString("trade_name"));
+                    dto.setUnitPrice(rs.getInt("unit_price"));
+                    dto.setSaleNumber(rs.getInt("sale_number"));
+                    dto.setNote(rs.getString("note"));
+                    dto.setStaffName(rs.getString("staff_name"));
+                    dto.setAccountId(rs.getInt("account_id"));
+                }
             }
-        }catch(Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         return dto;
     }
-    
-    public int updateNote( int saleId, String note){
+
+    // =========================
+    // メモ更新
+    // =========================
+    public int updateNote(int saleId, String note) {
 
         String sql =
-            "UPDATE sales "
-          + "SET note=?, "
-          + "updated_at=CURRENT_TIMESTAMP "
-          + "WHERE sale_id=?";
+            "UPDATE sales SET note = ?, updated_at = CURRENT_TIMESTAMP WHERE sale_id = ?";
 
-        try(Connection con=DbUtil.getConnection();
-            PreparedStatement ps=
-                con.prepareStatement(sql)){
+        try (Connection con = DbUtil.getConnection();
+             PreparedStatement ps = con.prepareStatement(sql)) {
 
-            ps.setString(1,note);
-            ps.setInt(2,saleId);
+            ps.setString(1, note);
+            ps.setInt(2, saleId);
 
             return ps.executeUpdate();
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             e.printStackTrace();
         }
+
         return 0;
     }
 }
