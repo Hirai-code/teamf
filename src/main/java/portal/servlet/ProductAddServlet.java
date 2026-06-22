@@ -74,7 +74,9 @@ public class ProductAddServlet extends HttpServlet {
         String productName = request.getParameter("productName");
         String categoryId = request.getParameter("categoryId");
         String price = request.getParameter("price");
-        String saleFlag = request.getParameter("saleFlag");
+        
+        
+        
         
         
         
@@ -104,8 +106,10 @@ public class ProductAddServlet extends HttpServlet {
                     .forward(request, response);
             return;
         }
+
         // カテゴリチェック
         if (categoryId == null || categoryId.isEmpty()) {
+
             request.setAttribute(
                     "errorMsg",
                     "カテゴリーが選択されていません。");
@@ -115,142 +119,64 @@ public class ProductAddServlet extends HttpServlet {
                     .forward(request, response);
             return;
         }
-        int categoryIdValue;
 
-        try{
-            categoryIdValue =
-                    Integer.parseInt(categoryId);
+        // 価格チェック
+        if (price == null || price.trim().isEmpty()) {
 
-        }catch(NumberFormatException e){
-            forwardError(
-                    request,
-                    response,
-                    "カテゴリーの値が不正です。");
-            return;
-
-        }
-
-
-        /*
-         * 価格チェック
-         */
-        if(price == null
-                || price.trim().isEmpty()){
-            forwardError(
-                    request,
-                    response,
+            request.setAttribute(
+                    "errorMsg",
                     "価格が入力されていません。");
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/ProductAdd.jsp")
+                    .forward(request, response);
             return;
         }
-
+        
         int priceValue;
-        try{
-            priceValue =
-                    Integer.parseInt(price);
-            if(priceValue < 0){
-                forwardError(
-                        request,
-                        response,
+
+        try {
+            priceValue = Integer.parseInt(price);
+
+            if (priceValue < 0) {
+
+                request.setAttribute(
+                        "errorMsg",
                         "価格は0以上で入力してください。");
+
+                request.getRequestDispatcher(
+                        "/WEB-INF/jsp/ProductAdd.jsp")
+                        .forward(request, response);
                 return;
             }
-        }catch(NumberFormatException e){
-            forwardError(
-                    request,
-                    response,
+
+        } catch (NumberFormatException e) {
+
+            request.setAttribute(
+                    "errorMsg",
                     "価格は整数で入力してください。");
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/ProductAdd.jsp")
+                    .forward(request, response);
             return;
         }
 
+        // ↓ここからDB登録処理
+        // ProductDao dao = new ProductDao();
+        // dao.insert(...);
+        String saleFlag = request.getParameter("saleFlag");
 
-        /*
-         * 販売状態チェック
-         */
-        if(saleFlag == null
-                || saleFlag.trim().isEmpty()){
-            forwardError(
-                    request,
-                    response,
-                    "販売状態が選択されていません。");
-            return;
-        }
+     // 確認画面へ値を渡す
+     request.setAttribute("productName", productName);
+     request.setAttribute("categoryId", Integer.parseInt(categoryId));
+     request.setAttribute("price", Integer.parseInt(price));
+     request.setAttribute("saleFlag", Integer.parseInt(saleFlag));
 
-        int saleFlagValue;
-
-        try{
-            saleFlagValue =
-                    Integer.parseInt(saleFlag);
-
-        }catch(NumberFormatException e){
-
-            forwardError(
-                    request,
-                    response,
-                    "販売状態の値が不正です。");
-            return;
-        }
-
-
-        /*
-         * 確認画面へ渡す
-         */
-
-        request.setAttribute(
-                "productName",
-                productName);
-
-        request.setAttribute(
-                "categoryId",
-                categoryIdValue);
-
-        request.setAttribute(
-                "price",
-                priceValue);
-
-        request.setAttribute(
-                "saleFlag",
-                saleFlagValue);
-
-        request.getRequestDispatcher(
-                "/WEB-INF/jsp/ProductAddConfirm.jsp")
-                .forward(request, response);
-
+     // 確認画面表示
+     request.getRequestDispatcher(
+             "/WEB-INF/jsp/ProductAddConfirm.jsp")
+             .forward(request, response);
+        
     }
-
-
-    /**
-     * エラー時共通処理
-     */
-    private void forwardError(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            String message)
-            throws ServletException, IOException {
-
-        request.setAttribute(
-                "errorMsg",
-                message);
-
-        // 入力値保持
-        request.setAttribute(
-                "productName",
-                request.getParameter("productName"));
-
-        request.setAttribute(
-                "categoryId",
-                request.getParameter("categoryId"));
-
-        request.setAttribute(
-                "price",
-                request.getParameter("price"));
-
-        request.setAttribute(
-                "saleFlag",
-                request.getParameter("saleFlag"));
-
-        request.getRequestDispatcher(
-                "/WEB-INF/jsp/ProductAdd.jsp")
-                .forward(request, response);
-    }
-
 }

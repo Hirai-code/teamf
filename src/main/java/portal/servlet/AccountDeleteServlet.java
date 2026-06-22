@@ -7,7 +7,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import portal.dao.AccountDao;
 
@@ -32,17 +31,12 @@ public class AccountDeleteServlet extends HttpServlet {
 
             dao.delete(accountId);
 
-            HttpSession session = request.getSession();
-            session.setAttribute(
-                "successMessage",
-                "アカウントを削除しました。"
-            );
-
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         response.sendRedirect(
-        	    request.getContextPath()
-        	    + "/AccountHomeServlet"
-        	);
-}}
+            request.getContextPath()
+            + "/AccountHomeServlet");
+    }
+}

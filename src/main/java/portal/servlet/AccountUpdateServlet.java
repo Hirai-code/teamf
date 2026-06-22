@@ -7,7 +7,6 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import portal.dao.AccountDao;
 import portal.dto.AccountDto;
@@ -114,17 +113,9 @@ public class AccountUpdateServlet extends HttpServlet {
 
         if(result > 0){
 
-            HttpSession session = request.getSession();
-
-            session.setAttribute(
-                "successMessage",
-                "アカウントを更新しました。"
-            );
-
             response.sendRedirect(
                 request.getContextPath()
-                + "/AccountHomeServlet"
-            );
+                + "/AccountHomeServlet");
 
         }else{
 

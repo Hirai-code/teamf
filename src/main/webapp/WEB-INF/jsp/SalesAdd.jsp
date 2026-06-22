@@ -379,6 +379,38 @@ ${item.itemName}
 
 
 <label>
+金額計算
+</label>
+
+
+<div class="calc-preview">
+
+
+販売時単価：
+${unitPrice} 円
+
+
+<br>
+
+
+合計金額：
+<span style="color:#00704a">
+
+${totalAmount}
+
+</span>
+
+円
+
+</div>
+
+
+</div>
+
+<div class="form-group">
+
+
+<label>
 
 登録者スタッフ名
 

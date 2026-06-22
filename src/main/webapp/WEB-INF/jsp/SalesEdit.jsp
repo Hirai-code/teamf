@@ -54,6 +54,8 @@ margin-top:8px;
 
 button{
 
+margin-top:20px;
+
 padding:12px 30px;
 
 border:none;
@@ -72,9 +74,11 @@ cursor:pointer;
     margin-top:20px;
     display:flex;
     gap:10px;
-    justify-content:flex-end;
 }
 
+.button-area button{
+    flex:1;
+}
 
 .back-btn{
     background:#999;
@@ -135,18 +139,16 @@ cursor:pointer;
 	rows="5">${sale.note}</textarea>
 	
 	
-	<div class="button-area">
+	
+	<button type="submit">
+		保存
+	</button>
 	
 	<button type="button"
 			class="back-btn"
             onclick="location.href='SalesListServlet'">
         戻る
     </button>
-	
-	<button type="submit">
-		保存
-	</button>
-	
 	
 	
 	
