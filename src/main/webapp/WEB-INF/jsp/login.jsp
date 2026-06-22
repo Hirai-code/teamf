@@ -57,6 +57,12 @@ body{
     gap:12px;
 }
 
+.header-icon{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+}
+
 .login-container{
     min-height:calc(100vh - 88px);
     display:flex;
@@ -151,8 +157,13 @@ h1{
 
 <div class="header">
     <div class="header-title">
-        <span>☕</span>
-        Shoma-Cafe Backroom System
+        <div class="header-title">
+    <img src="${pageContext.request.contextPath}/images/dogicon.png"
+         alt="Dog Icon"
+         class="header-icon">
+    Shoma-Cafe Backroom System
+</div>
+        
     </div>
 </div>
 

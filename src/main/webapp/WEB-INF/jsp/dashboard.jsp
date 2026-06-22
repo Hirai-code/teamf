@@ -73,6 +73,12 @@ body {
     gap:12px;
 }
 
+.header-dog-icon{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+}
+
 .user-info{
     display:flex;
     align-items:center;
@@ -230,8 +236,13 @@ body {
 <div class="header">
 
     <div class="header-title">
-        <span>☕</span>
-        Shoma-Cafe Backroom System
+    <div class="header-title">
+    <img
+        src="${pageContext.request.contextPath}/images/dogicon2.png"
+        alt="Dog Icon"
+        class="header-dog-icon">
+    Shoma-Cafe Backroom System
+</div>
     </div>
 
  <div class="user-info">
