@@ -33,43 +33,58 @@ public class AccountEditorServlet extends HttpServlet {
 
         request.setCharacterEncoding("UTF-8");
 
+        // =========================
+        // 🔐 権限制御（ここが追加部分）
+        // =========================
+        HttpSession session = request.getSession(false);
 
-        String idStr = request.getParameter("id");
+        AccountDto loginUser =
+                (AccountDto) session.getAttribute("loginUser");
 
-
-        if (idStr == null) {
-
+        // 未ログイン
+        if (loginUser == null) {
             response.sendRedirect(
-                request.getContextPath()
-                + "/AccountHomeServlet");
-
+                    request.getContextPath() + "/login");
             return;
         }
 
+        // MANAGER以外は拒否
+        if (!"MANAGER".equals(loginUser.getRole())) {
+            response.sendRedirect(
+                    request.getContextPath() + "/AccountHomeServlet");
+            return;
+        }
+
+        // =========================
+        // ここから元の処理
+        // =========================
+
+        String idStr = request.getParameter("id");
+
+        if (idStr == null) {
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/AccountHomeServlet");
+            return;
+        }
 
         int accountId = Integer.parseInt(idStr);
-
 
         AccountDao dao = new AccountDao();
 
         AccountDto account =
                 dao.findById(accountId);
 
-
         if (account == null) {
-
             response.sendRedirect(
-                request.getContextPath()
-                + "/AccountHomeServlet");
-
+                    request.getContextPath()
+                    + "/AccountHomeServlet");
             return;
         }
-
 
         request.setAttribute(
                 "account",
                 account);
-
 
         request.getRequestDispatcher(
                 "/WEB-INF/jsp/AccountEditor.jsp")
