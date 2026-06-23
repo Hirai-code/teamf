@@ -21,6 +21,19 @@ public class SalesDto {
     public int getSaleId() {
         return saleId;
     }
+    private String role;
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+    
+    public boolean isAdmin() {
+        return "ADMIN".equals(this.role);
+    }
 
     public void setSaleId(int saleId) {
         this.saleId = saleId;
