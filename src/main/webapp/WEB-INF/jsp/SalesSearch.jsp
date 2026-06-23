@@ -241,11 +241,8 @@ body {
 
         <div class="search-card-title">
             検索条件の指定
-            <c:if test="${not empty errorMessage}">
-                <div class="error-summary" style="display:block;">
-                    ${errorMessage}
-                </div>
-            </c:if>
+            
+            
         </div>
 
         <form action="SalesListServlet" method="get" class="search-form">
