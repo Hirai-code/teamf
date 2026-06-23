@@ -55,7 +55,17 @@ body {
     border-radius: 20px;
     transition: 0.2s;
 }
-
+.header-dog-icon {
+    width: 60px;
+    height: 60px;
+    object-fit: contain;
+    margin-right: 10px;
+}
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
 .back-home:hover {
     background: var(--sb-light-green);
 }
@@ -180,11 +190,24 @@ td:last-child {
 <c:set var="user" value="${sessionScope.loginUser}" />
 
 <div class="header">
-    <div class="header-title">☕ 商品一覧</div>
 
-    <a href="${pageContext.request.contextPath}/dashboard" class="back-home">
-    ← メインメニューへ戻る
-</a>
+    <div class="header-left">
+        <img
+            src="${pageContext.request.contextPath}/images/dog-product.png"
+            alt="Dog Icon Product"
+            class="header-dog-icon">
+
+        <div class="header-title">
+            商品一覧
+        </div>
+    </div>
+
+    <a href="${pageContext.request.contextPath}/dashboard"
+       class="back-home">
+       ← メインメニューへ戻る
+    </a>
+
+</div>
 </div>
 
 <div class="container">

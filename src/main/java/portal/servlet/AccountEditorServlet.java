@@ -21,6 +21,16 @@ public class AccountEditorServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
+    	HttpSession session = request.getSession(false);
+
+    	if (session == null
+    	        || session.getAttribute("loginUser") == null) {
+
+    	    response.sendRedirect(
+    	            request.getContextPath() + "/login");
+    	    return;
+    	}
+
         request.setCharacterEncoding("UTF-8");
 
         // =========================

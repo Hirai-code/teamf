@@ -35,16 +35,15 @@ public class AccountHomeServlet extends HttpServlet {
         // ログインユーザー取得
         AccountDto loginUser =
                 (AccountDto) session.getAttribute("loginUser");
+        System.out.println("LOGIN USER: " + loginUser.getLoginId());
+        System.out.println("ROLE: " + loginUser.getRole());
+
 
 
         // 未ログインの場合
-        if (loginUser == null) {
-
-            response.sendRedirect(
-                request.getContextPath() + "/login"
-            );
-
-            return;
+        if (loginUser != null) {
+            System.out.println("LOGIN USER: " + loginUser.getLoginId());
+            System.out.println("ROLE: " + loginUser.getRole());
         }
 
 
