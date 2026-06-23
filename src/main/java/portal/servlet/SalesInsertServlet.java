@@ -33,6 +33,31 @@ protected void doPost(
     String itemId = request.getParameter("itemId");
     String quantity = request.getParameter("quantity");
     String memo = request.getParameter("memo");
+    
+
+    if (memo != null && memo.length() > 500) {
+
+        request.setAttribute(
+                "errorMessage",
+                "メモは500文字以内で入力してください。");
+
+        request.setAttribute("salesDate", salesDate);
+        request.setAttribute("itemId", itemId);
+        request.setAttribute("quantity", quantity);
+        request.setAttribute("memo", memo);
+
+        ProductDao productDao = new ProductDao();
+
+        request.setAttribute(
+                "itemList",
+                productDao.findAll());
+
+        request.getRequestDispatcher(
+                "/WEB-INF/jsp/SalesAdd.jsp")
+                .forward(request, response);
+
+        return;
+    }
 
     ProductDao productDao = new ProductDao();
 

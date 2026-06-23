@@ -37,6 +37,7 @@ protected void doGet(
 
 @Override
 protected void doPost(
+		
         HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException, IOException {
@@ -45,6 +46,24 @@ protected void doPost(
 
     int saleId = Integer.parseInt(request.getParameter("saleId"));
     String note = request.getParameter("note");
+    System.out.println("文字数=" + note.length());
+    if (note != null && note.length() > 500) {
+
+        request.setAttribute(
+                "errorMessage",
+                "メモは500文字以内で入力してください。");
+
+        SalesDao dao = new SalesDao();
+        SalesDto sale = dao.findById(saleId);
+
+        request.setAttribute("sale", sale);
+
+        request.getRequestDispatcher(
+                "/WEB-INF/jsp/SalesEdit.jsp")
+                .forward(request, response);
+
+        return;
+    }
 
     SalesDao dao = new SalesDao();
 

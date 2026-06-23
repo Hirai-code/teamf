@@ -97,6 +97,17 @@ cursor:pointer;
 	
 	
 	<h2>売上メモ編集</h2>
+	<c:if test="${not empty errorMessage}">
+    <div style="
+        background:#f8d7da;
+        color:#842029;
+        border:1px solid #f5c2c7;
+        padding:10px;
+        margin-bottom:15px;
+        border-radius:8px;">
+        ${errorMessage}
+    </div>
+</c:if>
 	
 	
 	<form action="SalesEditServlet"

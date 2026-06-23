@@ -39,6 +39,30 @@ protected void doGet(
             minAmount,
             maxAmount
     );
+    
+ // 期間チェック
+    if (startDate != null && !startDate.isEmpty()
+            && endDate != null && !endDate.isEmpty()) {
+
+        if (startDate.compareTo(endDate) > 0) {
+
+            request.setAttribute(
+                    "errorMessage",
+                    "期間Fromは期間To以前の日付を入力してください。");
+
+            // 入力値保持
+            request.setAttribute("startDate", startDate);
+            request.setAttribute("endDate", endDate);
+            request.setAttribute("minAmount", minAmount);
+            request.setAttribute("maxAmount", maxAmount);
+
+            request.getRequestDispatcher(
+                    "/WEB-INF/jsp/SalesSearch.jsp")
+                    .forward(request, response);
+
+            return;
+        }
+    }
 
     request.setAttribute("salesList", list);
 
