@@ -49,6 +49,14 @@
 	    letter-spacing: 0.05em;
 	}
 	
+	.header-dog-icon{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+	
 	.top-right {
 	    display: flex;
 	    align-items: center;
@@ -171,7 +179,10 @@
 	<div class="header">
 	
 	    <div class="header-title">
-	        💰 売上一覧
+	        <img src="${pageContext.request.contextPath}/images/dog-money.png"
+         alt="dog"
+         class="header-dog-icon">
+	        売上一覧
 	    </div>
 	
 	

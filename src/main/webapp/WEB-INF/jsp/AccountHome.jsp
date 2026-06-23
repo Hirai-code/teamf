@@ -43,6 +43,20 @@ body{
     font-weight:700;
 }
 
+.header-title {
+	    font-size: 22px;
+	    font-weight: 700;
+	    letter-spacing: 0.05em;
+	}
+	
+.header-dog-icon{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
 
 .back-home{
     color:white;
@@ -168,7 +182,13 @@ th{
 <body>
 
 <div class="header">
-    <h1>👤 アカウント一覧</h1>
+	<div class="header-title">
+	    <img src="${pageContext.request.contextPath}/images/dog-account.png"
+         alt="dog"
+         class="header-dog-icon">
+    アカウント一覧
+ </div>
+ 
     <a href="${pageContext.request.contextPath}/dashboard" class="back-home">
     ← メインメニューへ戻る
 </a>
