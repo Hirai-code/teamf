@@ -22,6 +22,16 @@ protected void doGet(
         HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException, IOException {
+	
+	HttpSession session = request.getSession(false);
+
+	if (session == null
+	        || session.getAttribute("loginUser") == null) {
+
+	    response.sendRedirect(
+	            request.getContextPath() + "/login");
+	    return;
+	}
 
     String id = request.getParameter("id");
 
@@ -41,6 +51,16 @@ protected void doPost(
         HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException, IOException {
+	
+	HttpSession session = request.getSession(false);
+
+	if (session == null
+	        || session.getAttribute("loginUser") == null) {
+
+	    response.sendRedirect(
+	            request.getContextPath() + "/login");
+	    return;
+	}
 
     request.setCharacterEncoding("UTF-8");
 
@@ -69,7 +89,6 @@ protected void doPost(
 
     dao.updateNote(saleId, note);
 
-    HttpSession session = request.getSession();
     session.setAttribute("message", "売上の更新をしました");
 
     response.sendRedirect("SalesListServlet");

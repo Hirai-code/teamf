@@ -21,6 +21,17 @@ protected void doGet(
         HttpServletRequest request,
         HttpServletResponse response)
         throws ServletException, IOException {
+	
+	 HttpSession session =
+	            request.getSession(false);
+
+	    if (session == null
+	            || session.getAttribute("loginUser") == null) {
+
+	        response.sendRedirect(
+	                request.getContextPath() + "/login");
+	        return;
+	    }
 
     request.setCharacterEncoding("UTF-8");
 
@@ -67,7 +78,7 @@ protected void doGet(
     request.setAttribute("salesList", list);
 
     // ⭐ ここが追加部分
-    HttpSession session = request.getSession();
+  
 
     String message = (String) session.getAttribute("message");
 
