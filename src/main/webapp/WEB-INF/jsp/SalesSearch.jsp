@@ -52,6 +52,14 @@ body {
     letter-spacing: 0.05em;
 }
 
+.header-dog-icon{
+    width:60px;
+    height:60px;
+    object-fit:contain;
+    vertical-align: middle;
+    margin-right: 10px;
+}
+
 .back-home {
     color: white;
     text-decoration: none;
@@ -222,7 +230,12 @@ body {
 <body>
 
 <div class="header">
-    <div class="header-title">🔍 売上データの検索</div>
+    <div class="header-title">
+    <img src="${pageContext.request.contextPath}/images/dog-sales.png"
+         alt="dog"
+         class="header-dog-icon">
+    売上データの検索
+</div>
     <a href="${pageContext.request.contextPath}/dashboard" class="back-home">
         ← メインメニューへ戻る
     </a>
