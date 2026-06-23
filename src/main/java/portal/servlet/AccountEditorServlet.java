@@ -21,34 +21,27 @@ public class AccountEditorServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
-    	HttpSession session = request.getSession(false);
-
-    	if (session == null
-    	        || session.getAttribute("loginUser") == null) {
-
-    	    response.sendRedirect(
-    	            request.getContextPath() + "/login");
-    	    return;
-    	}
-
         request.setCharacterEncoding("UTF-8");
 
         // =========================
-        // 🔐 権限制御（ここが追加部分）
+        // 🔐 セッション＆ログインチェック
         // =========================
         HttpSession session = request.getSession(false);
 
-        AccountDto loginUser =
-                (AccountDto) session.getAttribute("loginUser");
+        if (session == null ||
+            session.getAttribute("loginUser") == null) {
 
-        // 未ログイン
-        if (loginUser == null) {
             response.sendRedirect(
                     request.getContextPath() + "/login");
             return;
         }
 
-        // MANAGER以外は拒否
+        AccountDto loginUser =
+                (AccountDto) session.getAttribute("loginUser");
+
+        // =========================
+        // 🔐 権限チェック
+        // =========================
         if (!"MANAGER".equals(loginUser.getRole())) {
             response.sendRedirect(
                     request.getContextPath() + "/AccountHomeServlet");
