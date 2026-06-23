@@ -253,11 +253,20 @@ td:last-child {
                 編集
             </a>
 
-            <a href="${pageContext.request.contextPath}/ProductDeleteServlet?id=${item.itemId}"
-               class="btn delete"
-               onclick="return confirm('本当に削除しますか？');">
-                削除
-            </a>
+            <form action="${pageContext.request.contextPath}/ProductDeleteServlet"
+      method="post"
+      onsubmit="return confirm('本当に削除しますか？');">
+
+    <input type="hidden"
+           name="id"
+           value="${item.itemId}">
+
+    <button type="submit"
+            class="btn delete">
+        削除
+    </button>
+
+</form>
 
         </div>
     </c:if>

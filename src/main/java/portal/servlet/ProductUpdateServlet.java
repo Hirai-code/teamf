@@ -155,10 +155,26 @@ public class ProductUpdateServlet extends HttpServlet {
         dto.setPrice(price);
         dto.setSellingFlg(sellingFlg);
 
-        HttpSession session = request.getSession();
+        HttpSession session = request.getSession(false);
+        if (session == null) {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/login");
+
+            return;
+        }
 
         AccountDto loginUser =
                 (AccountDto) session.getAttribute("loginUser");
+        if (loginUser == null) {
+
+            response.sendRedirect(
+                    request.getContextPath()
+                    + "/login");
+
+            return;
+        }
 
         int accountId =
                 loginUser.getAccountId();
