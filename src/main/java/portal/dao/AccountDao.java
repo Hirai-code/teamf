@@ -218,7 +218,7 @@ public class AccountDao {
 
         String sql =
             "SELECT COUNT(*) FROM accounts " +
-            "WHERE role = 'ADMIN' AND delete_flag = 0";
+            "WHERE role = 'MANAGER' AND delete_flag = 0";
 
         try (Connection con = DbUtil.getConnection();
              PreparedStatement ps = con.prepareStatement(sql);
