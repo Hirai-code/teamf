@@ -208,7 +208,6 @@ td:last-child {
     </a>
 
 </div>
-</div>
 
 <div class="container">
 <c:if test="${not empty successMsg}">

@@ -37,6 +37,8 @@ public class ProductDao {
              PreparedStatement ps = con.prepareStatement(SELECT_ALL);
              ResultSet rs = ps.executeQuery()) {
 
+        	System.out.println("接続DB：" + con.getCatalog());
+        	
             while (rs.next()) {
 
                 ProductDto item = new ProductDto();
@@ -70,6 +72,7 @@ public class ProductDao {
             e.printStackTrace();
         }
 
+        System.out.println("商品件数：" + list.size());
         return list;
     }
 
