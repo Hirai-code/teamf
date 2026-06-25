@@ -105,6 +105,8 @@ INSERT INTO accounts ( login_id, staff_name, password, role) VALUES
 ('staff17', 'スタッフ17', 'password', 'STAFF'),
 ('staff18', 'スタッフ18', 'password', 'STAFF');
 
+UPDATE accounts SET delete_flag = 1 WHERE account_id = 3;
+
 -- 商品カテゴリーデータ
 INSERT INTO categories (category_name) VALUES
 ('Drink'),
@@ -242,7 +244,7 @@ INSERT INTO sales
 -- 論理削除確認用
 ('2026-06-11',2,1,1,'icecoffee',400,1,'削除テスト',2,1);
 
---1万件のデータ
+-- 1万件のデータ
 INSERT INTO sales (sale_date,account_id,category_id,item_id,trade_name,unit_price,sale_number,note,update_by,deleted_flg) VALUES
 ('2026-08-27',13,3,69,'Tumbler2',2000,3,'朝の販売',13,0),
 ('2026-06-29',19,2,17,'Sandwich',550,8,'通常販売',19,0),
