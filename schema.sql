@@ -225,7 +225,7 @@ INSERT INTO sales
  
  
 -- スタッフ01：2026/06/02
-('2026-06-02',2,1,2,'hotcoffee',400,5,'午前販売',2,0),
+('2026-06-02',2,1,2,'hotcoffee',400,5,'午前販売',2,0)f
 ('2026-06-02',2,2,11,'donut',300,4,NULL,2,0),
  
  
@@ -10233,7 +10233,7 @@ INSERT INTO sales (sale_date,account_id,category_id,item_id,trade_name,unit_pric
 ('2026-09-08',19,1,64,'Royal_Milk_Tea',500,1,'午後販売',19,0),
 ('2026-11-14',7,2,14,'Chocolate_Cake',600,6,'午前販売',7,0),
 ('2026-11-13',1,2,23,'Nishimatsu_Bread',500,4,'通常販売',1,0),
-('2026-07-25',11,2,14,'Chocolate_Cake',600,6,'午後販売',11,0),
+('2026-07-25',11,2,14,'Chocolate_Cake',600,6,'午後販売',11,0);
 
 -- 確認用SQL
 SELECT * FROM accounts;
